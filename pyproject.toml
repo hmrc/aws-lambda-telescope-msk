@@ -5,20 +5,23 @@ description = "Telescope library for interacting with an MSK/Kafka cluster"
 readme = "README.md"
 authors = ["Vítor Brandão <109226+vitorbrandao@users.noreply.github.com>"]
 maintainers = ["Team Telemetry"]
-packages = [
-  { include = "telemetry" }
+
+packages = [	
+  { include = "telemetry" }	
 ]
 
 [tool.poetry.dependencies]
 python = "^3.6"
 fire = "^0.3.1"
-confluent-kafka = "^1.5.0"
+confluent-kafka = "^1.6.0"
 boto3 = "^1.16.49"
 rich = "^9.6.1"
 sshtunnel = "^0.3.1"
+graphyte = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+pytest-cov = "^2.11.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

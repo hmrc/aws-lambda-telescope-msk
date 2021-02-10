@@ -3,12 +3,19 @@
 
 import boto3
 from telemetry.telescope_msk.logger import get_app_logger
-from telemetry.telescope_msk.cli import print_markdown, get_console
+from telemetry.telescope_msk.cli import get_console
 from typing import List
+from botocore.config import Config
+
+my_config = Config(
+    region_name='eu-west-2',
+    connect_timeout=10,
+    read_timeout=10
+)
 
 DEFAULT_CLUSTER_NAME = 'msk-cluster'
 
-client = boto3.client('kafka')
+msk_client = boto3.client('kafka', config=my_config)
 logger = get_app_logger()
 
 
@@ -77,7 +84,7 @@ class BootstrapServers:
 
 def get_cluster_arn(cluster_name: str) -> str:
     logger.debug("Getting the cluster ARN for '%s'" % cluster_name)
-    response = client.list_clusters(ClusterNameFilter=cluster_name, MaxResults=1)
+    response = msk_client.list_clusters(ClusterNameFilter=cluster_name, MaxResults=1)
     try:
         cluster_arn = response['ClusterInfoList'][0]['ClusterArn']
         logger.debug("MSK cluster ARN: %s" % cluster_arn)
@@ -88,7 +95,7 @@ def get_cluster_arn(cluster_name: str) -> str:
 
 
 def get_cluster_info(cluster_arn: str) -> MskCluster:
-    response = client.describe_cluster(
+    response = msk_client.describe_cluster(
         ClusterArn=cluster_arn
     )
 
@@ -100,7 +107,7 @@ def get_bootstrap_servers(cluster_arn: str) -> BootstrapServers:
      in your Kafka producer or consumer configuration.
     """
     logger.debug("Fetching bootstrap servers for '%s'" % cluster_arn)
-    response = client.get_bootstrap_brokers(
+    response = msk_client.get_bootstrap_brokers(
         ClusterArn=cluster_arn
     )
 
@@ -112,8 +119,12 @@ def get_bootstrap_servers(cluster_arn: str) -> BootstrapServers:
 
 def get_default_bootstrap_servers() -> BootstrapServers:
     cluster_arn = get_cluster_arn(DEFAULT_CLUSTER_NAME)
-
     return get_bootstrap_servers(cluster_arn)
+
+
+def get_plaintext_bootstrap_servers():
+    bootstrap_servers = get_default_bootstrap_servers().plaintext_str
+    return bootstrap_servers
 
 
 def print_summary():
