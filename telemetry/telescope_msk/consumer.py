@@ -2,6 +2,7 @@ import confluent_kafka
 from confluent_kafka import Consumer
 from confluent_kafka.cimpl import TopicPartition
 
+from telemetry.telescope_msk import APP_NAME
 from telemetry.telescope_msk.msk import get_default_bootstrap_servers
 
 # autodetect the environment: local vs AWS
@@ -14,39 +15,40 @@ from telemetry.telescope_msk.msk import get_default_bootstrap_servers
 # push this ^ to graphite
 # add https://pypi.org/project/graphyte/ or make sure its installed where this runs
 
-# telemetry.msk.topic.logs.partition.0.lag = 123456
+
+def get_consumer(bootstrap_servers: str) -> Consumer:
+    return Consumer({
+        'bootstrap.servers': bootstrap_servers,
+        'group.id': "metrics",
+    })
+
 
 def list_offsets(local=False):
     local_bootstrap_servers = 'localhost:9091,localhost:9092,localhost:9093'
     bootstrap_servers = get_default_bootstrap_servers().plaintext_str if not local else local_bootstrap_servers
-
-    consumer = Consumer({
-        'bootstrap.servers': bootstrap_servers,
-        'group.id': 'logstash',
-
-    })
-    topic = 'logs'
+    consumer = get_consumer(bootstrap_servers)
 
     try:
-        metadata = consumer.list_topics(topic, timeout=10)
-        print(metadata)
+        metadata = consumer.list_topics(timeout=10)
 
-        print(metadata.topics)
+        for topic in metadata.topics:
+            if topic and topic[0] == "_":
+                continue
 
-        if metadata.topics[topic].error is not None:
-            raise confluent_kafka.KafkaException(metadata.topics[topic].error)
+            print(topic)
 
-        # Construct TopicPartition list of partitions to query
-        partitions = [confluent_kafka.TopicPartition(topic, p) for p in metadata.topics[topic].partitions]
-        print(partitions)
+            if metadata.topics[topic].error is not None:
+                raise confluent_kafka.KafkaException(metadata.topics[topic].error)
 
-        # Query committed offsets for this group and the given partitions
-        committed = consumer.committed(partitions, timeout=10)
-        #
-        for partition in committed:
-            print(f"\nCalling return_metrics_for_partition() for {partition}")
-            metrics = return_metrics_for_partition(consumer, partition)
-            print(metrics)
+            # Construct TopicPartition list of partitions to query
+            partitions = [confluent_kafka.TopicPartition(topic, p) for p in metadata.topics[topic].partitions]
+
+            # Query committed offsets for this group and the given partitions
+            committed = consumer.committed(partitions, timeout=10)
+            #
+            for partition in committed:
+                metrics = return_metrics_for_partition(consumer, partition)
+                print(metrics)
 
     except Exception as e:
         print(e)

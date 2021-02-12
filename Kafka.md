@@ -1,4 +1,4 @@
-The high watermark offset is the offset of the last message th at was successfully copied to all of the log’s replicas.
+The high watermark offset is the offset of the last message that was successfully copied to all of the log’s replicas.
 
 Note
 
