@@ -8,7 +8,7 @@ from typing import List
 
 DEFAULT_CLUSTER_NAME = 'msk-cluster'
 
-client = boto3.client('kafka')
+msk_client = boto3.client('kafka')
 logger = get_app_logger()
 
 
@@ -77,7 +77,7 @@ class BootstrapServers:
 
 def get_cluster_arn(cluster_name: str) -> str:
     logger.debug("Getting the cluster ARN for '%s'" % cluster_name)
-    response = client.list_clusters(ClusterNameFilter=cluster_name, MaxResults=1)
+    response = msk_client.list_clusters(ClusterNameFilter=cluster_name, MaxResults=1)
     try:
         cluster_arn = response['ClusterInfoList'][0]['ClusterArn']
         logger.debug("MSK cluster ARN: %s" % cluster_arn)
@@ -88,7 +88,7 @@ def get_cluster_arn(cluster_name: str) -> str:
 
 
 def get_cluster_info(cluster_arn: str) -> MskCluster:
-    response = client.describe_cluster(
+    response = msk_client.describe_cluster(
         ClusterArn=cluster_arn
     )
 
@@ -100,7 +100,7 @@ def get_bootstrap_servers(cluster_arn: str) -> BootstrapServers:
      in your Kafka producer or consumer configuration.
     """
     logger.debug("Fetching bootstrap servers for '%s'" % cluster_arn)
-    response = client.get_bootstrap_brokers(
+    response = msk_client.get_bootstrap_brokers(
         ClusterArn=cluster_arn
     )
 
