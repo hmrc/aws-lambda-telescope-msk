@@ -44,6 +44,18 @@ Once a port is open you can run the standard scripts as above:
 aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer \
   poetry run bin/consumer-groups.py --help
 ```
+
+### Sync and run in ECS
+
+```sh
+export ECS_INSTANCE_IP_ADDRESS=10.3.0.191
+ssh $ECS_INSTANCE_IP_ADDRESS
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+./poetry/bin/poetry install
+export AWS_DEFAULT_REGION=eu-west-2
+python3 .poetry/bin/poetry run python3 bin/consumer-groups.py
+```
+
 ## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

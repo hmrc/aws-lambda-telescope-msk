@@ -16,10 +16,9 @@ from telemetry.telescope_msk.msk import get_default_bootstrap_servers
 
 # telemetry.msk.topic.logs.partition.0.lag = 123456
 
-
 def list_offsets(local=False):
     local_bootstrap_servers = 'localhost:9091,localhost:9092,localhost:9093'
-    bootstrap_servers = get_default_bootstrap_servers() if not local else local_bootstrap_servers
+    bootstrap_servers = get_default_bootstrap_servers().plaintext_str if not local else local_bootstrap_servers
 
     consumer = Consumer({
         'bootstrap.servers': bootstrap_servers,

@@ -5,10 +5,15 @@ import boto3
 from telemetry.telescope_msk.logger import get_app_logger
 from telemetry.telescope_msk.cli import print_markdown, get_console
 from typing import List
+from botocore.config import Config
+
+my_config = Config(
+    region_name='eu-west-2'
+)
 
 DEFAULT_CLUSTER_NAME = 'msk-cluster'
 
-msk_client = boto3.client('kafka')
+msk_client = boto3.client('kafka', config=my_config)
 logger = get_app_logger()
 
 

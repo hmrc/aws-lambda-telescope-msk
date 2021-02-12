@@ -40,3 +40,7 @@ poetry-update: ## Update the dependencies as according to the pyproject.toml fil
 rsync:
 	@./rsync.sh
 .PHONY: rsync
+
+sync-to-ecs: ## Sync local source files to ECS instance
+	@rsync -av bin telemetry 10.3.0.191:~/
+.PHONY: sync-to-ecs
