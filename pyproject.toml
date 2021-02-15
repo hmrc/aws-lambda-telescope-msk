@@ -12,7 +12,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.6"
 fire = "^0.3.1"
-confluent-kafka = "^1.5.0"
+confluent-kafka = "^1.6.0"
 boto3 = "^1.16.49"
 rich = "^9.6.1"
 sshtunnel = "^0.3.1"

@@ -1,7 +1,8 @@
 import confluent_kafka
 from confluent_kafka import Consumer
 from confluent_kafka.cimpl import TopicPartition
-
+from telemetry.telescope_msk.msk import get_plaintext_bootstrap_servers
+from telemetry.telescope_msk.msk import get_bootstrap_servers
 from telemetry.telescope_msk import APP_NAME
 from telemetry.telescope_msk.msk import get_default_bootstrap_servers
 
@@ -23,10 +24,8 @@ def get_consumer(bootstrap_servers: str) -> Consumer:
     })
 
 
-def list_offsets(local=False):
-    local_bootstrap_servers = 'localhost:9091,localhost:9092,localhost:9093'
-    bootstrap_servers = get_default_bootstrap_servers().plaintext_str if not local else local_bootstrap_servers
-    consumer = get_consumer(bootstrap_servers)
+def list_offsets():
+    consumer = get_consumer(get_plaintext_bootstrap_servers())
 
     try:
         metadata = consumer.list_topics(timeout=10)

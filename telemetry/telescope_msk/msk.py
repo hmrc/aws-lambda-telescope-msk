@@ -117,8 +117,12 @@ def get_bootstrap_servers(cluster_arn: str) -> BootstrapServers:
 
 def get_default_bootstrap_servers() -> BootstrapServers:
     cluster_arn = get_cluster_arn(DEFAULT_CLUSTER_NAME)
-
     return get_bootstrap_servers(cluster_arn)
+
+
+def get_plaintext_bootstrap_servers():
+    bootstrap_servers = get_default_bootstrap_servers().plaintext_str
+    return bootstrap_servers
 
 
 def print_summary():
