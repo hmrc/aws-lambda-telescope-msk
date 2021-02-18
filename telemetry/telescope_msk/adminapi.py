@@ -19,7 +19,6 @@ def create_admin_client(bootstrap_servers):
 
 def list_consumer_groups(admin_client: AdminClient) -> list:
     groups = admin_client.list_groups(timeout=10)
-    print(type(groups[0]))
     groups_list = []
     for g in groups:
         if g.error is None:

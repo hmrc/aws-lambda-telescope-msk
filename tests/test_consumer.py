@@ -1,95 +1,75 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 from unittest import mock
-from telemetry.telescope_msk.consumer import get_consumer, list_offsets, get_committed_partitions_for_topic
+
+import confluent_kafka
+
+from telemetry.telescope_msk.consumer import get_consumer, get_committed_partitions_for_topic, \
+    return_metrics_for_partition
 from confluent_kafka import Consumer
 from telemetry.telescope_msk.logger import get_app_logger
-from unittest.mock import patch
+
 
 def test_get_consumer():
     consumer = get_consumer(bootstrap_servers="test bootstrap arn")
     assert type(consumer) == Consumer
 
-# def test_list_offsets():
-#     # mock consumer.list topics to return metadata{topics} with no errors
-#     mock_metadata = {'topics': [{
-#         'topic': 'name',
-#         'partitions': {
-#         },
-#         'error': None
-#         }
-#     ]
-#     }
-#     mock_client = Consumer()
-#     mock_client.list_topics = MagicMock(return_value=mock_metadata)
-#
-#     # mock confluent_kafka.TopicPartition(topic, p) maybe we don't need this
-#
-#     # mock consumer.committed(partitions, timeout=10)
-#     mock_committed = [{
-#         'topic': 'some_topic',
-#         'id': 1,
-#         'offset':0
-#     }]
-#     mock_client.committed = MagicMock(return_value=mock_committed)
-#
-#
-#     assert False
 
-# @patch('confluent_kafka.admin.TopicMetadata')
-# @patch('confluent_kafka.admin.ClusterMetadata')
-# @patch('confluent_kafka.Consumer')
-# def test_list_topic_errors(MockConsumer, MockTopicPartition, MockTopicMetadata):
-#     logger = get_app_logger()
-#     with mock.patch.object(logger, 'error') as mock_logger:
-#         mock_error = 'test error message'
-#
-#         mock_topic = MockTopicMetadata()
-#         mock_topic.name = 'name'
-#         mock_topic.partitions = {}
-#         mock_topic.error = mock_error
-#
-#         mock_metadata = MockTopicPartition()
-#         mock_metadata.topics = {'name': mock_topic}
-#
-#         mock_consumer = MockConsumer()
-#         mock_consumer.list_topics = MagicMock(return_value=mock_metadata)
-#
-#         list_offsets(mock_consumer)
-#
-#         mock_logger.assert_called_once_with(mock_error)
-
-# def test_return_metrics():
-#
-#     assert False
-
-@patch('confluent_kafka.Consumer') #can we get away with just using Mock and not patching here?
-@patch('confluent_kafka.admin.TopicMetadata')
-def test_get_committed_partitions_for_topic_with_error(MockTopicMetadata, MockConsumer):
-    consumer = MockConsumer()
-    consumer.committed = MagicMock()
+def test_get_committed_partitions_for_topic_with_error():
+    consumer = MagicMock()
     logger = get_app_logger()
     with mock.patch.object(logger, 'error') as mock_logger:
         mock_error = 'test error message'
-        mock_topic = MockTopicMetadata()
-        mock_topic.topic = 'name'
-        mock_topic.partitions = {}
-        mock_topic.error = mock_error
+        mock_topic = Mock(
+            topic='name',
+            partitions={},
+            error=mock_error
+            )
 
         get_committed_partitions_for_topic(consumer, mock_topic)
 
         mock_logger.assert_called_once_with(mock_error)
 
 
+# what topics are being filtered out in list_offsets
+# can we do this with pattern matching? if so we should do this in  get_groups_excluding
 
 
+# test that hi being less than 0 returns a lag of none
+def test_negative_high_watermark():
+    consumer = MagicMock()
+    consumer.get_watermark_offsets.return_value = (0, -10)
+    partition = Mock(offset=10)
+
+    metrics = return_metrics_for_partition(consumer, partition)
+
+    assert metrics.get('Lag') is None
 
 
+# test that partition offset being less than 0 returns hi - low
+def test_negative_partition_offset():
+    # OFFSET_INVALID, OFFSET_STORED, OFFSET_END, and OFFSET_BEGINNING are all numerical consts that are < 0
+    consumer = MagicMock()
+    consumer.get_watermark_offsets.return_value = (5, 9)
+
+    assert return_metrics_for_partition(consumer, Mock(offset=-1)) == {'High': 9, 'Low': 5, 'Lag': 4}
 
 
+# test that if hi >=0 and partition offset >0 we return hi - offset
+def test_returns_normal_lag():
+    consumer = MagicMock()
+    consumer.get_watermark_offsets.return_value = (5, 9)
+
+    assert return_metrics_for_partition(consumer, Mock(offset=0)) == {'High': 9, 'Low': 5, 'Lag': 9}
 
 
+# test that if an error is raised we log it
+def test_logs_errors():
+    logger = get_app_logger()
+    with mock.patch.object(logger, 'error') as mock_logger:
+        mock_error = Exception('test error')
+        consumer = MagicMock()
+        consumer.get_watermark_offsets.side_effect = mock_error
 
+        return_metrics_for_partition(consumer, Mock(offset=0)) == {'High': 9, 'Low': 5, 'Lag': 9}
 
-
-
-
+        mock_logger.assert_called_once_with(mock_error)

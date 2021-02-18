@@ -64,23 +64,21 @@ def return_metrics_for_partition(consumer: Consumer, partition: TopicPartition) 
     try:
         (lo, hi) = consumer.get_watermark_offsets(partition, timeout=5, cached=False)
 
-        # if partition.offset == confluent_kafka.OFFSET_INVALID:
-        #     offset = "-"
-        # else:
-        #     offset = "%d" % (partition.offset)
-
         if hi < 0:
             lag = None  # Unlikely
         elif partition.offset < 0:
+            # OFFSET_INVALID, OFFSET_STORED, OFFSET_END, and OFFSET_BEGINNING are all numerical consts that are < 0
+
             # No committed offset, show total message count as lag.
             # The actual message count may be lower due to compaction
             # and record deletions.
             lag = hi - lo
         else:
             lag = hi - partition.offset
-
+        print("foo")
         return {"High": hi,
                 "Low": lo,
                 "Lag": lag}
     except Exception as e:
+        print("exception raised")
         logger.error(e)
