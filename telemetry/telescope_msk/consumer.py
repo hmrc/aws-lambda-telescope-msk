@@ -86,3 +86,14 @@ def return_metrics_for_partition(consumer: Consumer, partition: TopicPartition) 
     except Exception as e:
         print("exception raised")
         logger.error(e)
+
+
+
+######MORE METRICS
+###RANGE  HI-LO
+###DISTANCE TO LO offset-LO
+###PARTITION LAG BY GROUP VS CONSUMER LAG BY GROUP?
+###LOG SIZE BY TOPIC
+###MESSAGES IN BY TOPIC
+###AVERAGE PARTITION LAG
+###OFFSET AS % OF RANGE

@@ -43,7 +43,7 @@ def main(log_level: str = logging.DEBUG, graphite_host="graphite") -> None:
             for key in keys:
                 value = metric[key]
                 # EG: logstash.logs.partition_0.high.$high_watermark
-                print(create_metric_key(metric, group.id, key)+f"={value}")
+                # print(create_metric_key(metric, group.id, key)+f"={value}")
                 publish_asgs_to_graphite(create_metric_key(metric, group.id, key),value, graphite_host)
 
 
