@@ -1,15 +1,6 @@
 from confluent_kafka.admin import AdminClient
 from telemetry.telescope_msk.logger import get_app_logger
 
-# what do we hope to achieve?
-# Grab consumer lag for all consumer groups in a grafana dashboard
-#   return a list of consumer groups excluding aws msk
-#   transform into a string
-#   push to graphite
-#   build a grafana dashboard to display it.
-#   make available to consumer.py
-#   make it run continuously in a ecs task
-
 logger = get_app_logger()
 
 

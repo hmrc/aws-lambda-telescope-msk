@@ -16,7 +16,7 @@ http://cloudurable.com/blog/kafka-architecture-consumers/index.html
 
 Producer->Broker->Data Replication->Consumption->Committed
 
-
+# OFFSET_INVALID, OFFSET_STORED, OFFSET_END, and OFFSET_BEGINNING are all numerical consts that are < 0
 
 
 

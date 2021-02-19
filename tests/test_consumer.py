@@ -4,13 +4,13 @@ from unittest import mock
 import confluent_kafka
 
 from telemetry.telescope_msk.consumer import get_consumer, get_committed_partitions_for_topic, \
-    return_metrics_for_partition
+    return_metrics_for_partition, list_topics
 from confluent_kafka import Consumer
 from telemetry.telescope_msk.logger import get_app_logger
 
 
 def test_get_consumer():
-    consumer = get_consumer(bootstrap_servers="test bootstrap arn")
+    consumer = get_consumer(bootstrap_servers="test bootstrap arn", group_id="test")
     assert type(consumer) == Consumer
 
 
@@ -35,6 +35,7 @@ def test_get_committed_partitions_for_topic_with_error():
 
 
 # test that hi being less than 0 returns a lag of none
+
 def test_negative_high_watermark():
     consumer = MagicMock()
     consumer.get_watermark_offsets.return_value = (0, -10)
@@ -51,7 +52,9 @@ def test_negative_partition_offset():
     consumer = MagicMock()
     consumer.get_watermark_offsets.return_value = (5, 9)
 
-    assert return_metrics_for_partition(consumer, Mock(offset=-1)) == {'High': 9, 'Low': 5, 'Lag': 4}
+    assert return_metrics_for_partition(consumer, Mock(offset=-1, partition=11, topic='test_topic')) == {
+        'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 4
+    }
 
 
 # test that if hi >=0 and partition offset >0 we return hi - offset
@@ -59,7 +62,9 @@ def test_returns_normal_lag():
     consumer = MagicMock()
     consumer.get_watermark_offsets.return_value = (5, 9)
 
-    assert return_metrics_for_partition(consumer, Mock(offset=0)) == {'High': 9, 'Low': 5, 'Lag': 9}
+    assert return_metrics_for_partition(consumer, Mock(offset=0, partition=11, topic='test_topic')) == {
+        'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 9
+    }
 
 
 # test that if an error is raised we log it
@@ -70,6 +75,19 @@ def test_logs_errors():
         consumer = MagicMock()
         consumer.get_watermark_offsets.side_effect = mock_error
 
-        return_metrics_for_partition(consumer, Mock(offset=0)) == {'High': 9, 'Low': 5, 'Lag': 9}
+        return_metrics_for_partition(consumer, Mock(offset=-1, partition=11, topic='test_topic')) == {
+            'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 9
+        }
 
         mock_logger.assert_called_once_with(mock_error)
+
+
+def test_list_topics_filtered():
+    consumer = MagicMock()
+    consumer.list_topics.return_value = Mock(topics={
+        '__consumer_offsets': MagicMock(),
+        '__amazon_msk_canary': MagicMock(),
+        'non_filtered': MagicMock()
+    })
+
+    assert len(list_topics(consumer)) == 1

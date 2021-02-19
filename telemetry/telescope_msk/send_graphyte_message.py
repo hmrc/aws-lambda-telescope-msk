@@ -5,12 +5,10 @@ from telemetry.telescope_msk.logger import get_app_logger
 
 
 logger = get_app_logger()
+#
 
-
-def publish_asgs_to_graphite(metrics, graphite_host):
+def publish_asgs_to_graphite(partition, graphite_host):
     logger.info("Publishing msk to graphite")
-    for topic in topics():
-        for partiion in topic():
             send_msk_data(metrics_path, metrics, graphite_host)
 
 
