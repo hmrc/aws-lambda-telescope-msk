@@ -10,7 +10,9 @@ def get_graphite_host():
 
 
 def lambda_handler(event, context):
+    print("HELLO WORLD!!!")
     msk_logger = create_app_logger(logging.DEBUG)
+    msk_logger.log("HELLO LOGGER!!!!")
 
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
