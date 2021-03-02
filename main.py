@@ -12,7 +12,7 @@ def get_graphite_host():
 def lambda_handler(event, context):
     print("HELLO WORLD 11111!!!")
     msk_logger = create_app_logger(logging.DEBUG)
-    msk_logger.debug("HELLO LOGGER!!!!")
+    msk_logger.debug("HELLO LOGGER22222!!!!")
 
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
@@ -25,6 +25,7 @@ def lambda_handler(event, context):
         msk_logger.debug(bootstrap_servers)
 
         msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
+        msk_logger.debug(f'consumer {msk_consumer}')
         metrics = list_offsets(msk_consumer)
         msk_consumer.close()
 
