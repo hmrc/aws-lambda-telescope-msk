@@ -1,6 +1,7 @@
 from telemetry.telescope_msk import get_graphite_host, get_plaintext_bootstrap_servers, get_consumer, list_offsets, \
     publish_metrics, publish_metric_sums
 import os
+import logging
 from telemetry.telescope_msk.logger import create_app_logger
 
 
@@ -9,7 +10,7 @@ def get_graphite_host():
 
 
 def lambda_handler(event, context):
-    msk_logger = create_app_logger()
+    msk_logger = create_app_logger(logging.DEBUG)
 
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
@@ -19,6 +20,7 @@ def lambda_handler(event, context):
     try:
         graphite_host = get_graphite_host()
         bootstrap_servers = get_plaintext_bootstrap_servers()
+        msk_logger.debug(bootstrap_servers)
 
         msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
         metrics = list_offsets(msk_consumer)
