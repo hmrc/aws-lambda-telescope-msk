@@ -1,12 +1,7 @@
 import confluent_kafka
 from confluent_kafka import Consumer
-from confluent_kafka.cimpl import TopicPartition
 from confluent_kafka.admin import TopicMetadata
 from telemetry.telescope_msk.logger import get_app_logger
-from telemetry.telescope_msk.msk import get_plaintext_bootstrap_servers
-from telemetry.telescope_msk.msk import get_bootstrap_servers
-from telemetry.telescope_msk import APP_NAME
-from telemetry.telescope_msk.msk import get_default_bootstrap_servers
 
 # autodetect the environment: local vs AWS
 #   if local: tunnel + bootstrap_servers = 'localhost:9092'
@@ -62,27 +57,31 @@ def get_committed_partitions_for_topic(consumer: Consumer, topic: TopicMetadata)
     return consumer.committed(partitions, timeout=10)
 
 
-def return_metrics_for_partition(consumer: Consumer, partition: TopicPartition) -> dict:
+def return_metrics_for_partition(consumer: Consumer, partition: confluent_kafka.TopicPartition) -> dict:
     try:
-        (lo, hi) = consumer.get_watermark_offsets(partition, timeout=5, cached=False)
-
-        if hi < 0:
-            lag = None  # Unlikely
+        (low, high) = consumer.get_watermark_offsets(partition, timeout=5, cached=False)
+        # possible negative values for partition offset or high are defined by the following consts
+        # confluent_kafka.OFFSET_BEGINNING == -2
+        # confluent_kafka.OFFSET_END == -1
+        # confluent_kafka.OFFSET_STORED == -1000
+        # confluent_kafka.OFFSET_INVALID == -1001
+        if high < 0:
+            lag = 0  # Unlikely
         elif partition.offset < 0:
-            # OFFSET_INVALID, OFFSET_STORED, OFFSET_END, and OFFSET_BEGINNING are all numerical consts that are < 0
-
             # No committed offset, show total message count as lag.
             # The actual message count may be lower due to compaction
             # and record deletions.
-            lag = hi - lo
+            lag = high - low
         else:
-            lag = hi - partition.offset
+            lag = high - partition.offset
         return {
                 "topic_name": partition.topic,
                 "partition_id": partition.partition,
-                "high": hi,
-                "low": lo,
-                "lag": lag}
+                "high": high,
+                "low": low,
+                "lag": lag,
+                "offset": partition.offset
+        }
     except Exception as e:
         print("exception raised")
         logger.error(e)

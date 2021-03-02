@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock, Mock
 from unittest import mock
 
-import confluent_kafka
 
 from telemetry.telescope_msk.consumer import get_consumer, get_committed_partitions_for_topic, \
     return_metrics_for_partition, list_topics
@@ -30,12 +29,7 @@ def test_get_committed_partitions_for_topic_with_error():
         mock_logger.assert_called_once_with(mock_error)
 
 
-# what topics are being filtered out in list_offsets
-# can we do this with pattern matching? if so we should do this in  get_groups_excluding
-
-
 # test that hi being less than 0 returns a lag of none
-
 def test_negative_high_watermark():
     consumer = MagicMock()
     consumer.get_watermark_offsets.return_value = (0, -10)
@@ -43,7 +37,7 @@ def test_negative_high_watermark():
 
     metrics = return_metrics_for_partition(consumer, partition)
 
-    assert metrics.get('Lag') is None
+    assert metrics.get('lag') == 0
 
 
 # test that partition offset being less than 0 returns hi - low
@@ -53,7 +47,7 @@ def test_negative_partition_offset():
     consumer.get_watermark_offsets.return_value = (5, 9)
 
     assert return_metrics_for_partition(consumer, Mock(offset=-1, partition=11, topic='test_topic')) == {
-        'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 4
+        'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 4, 'offset': -1
     }
 
 
@@ -63,7 +57,7 @@ def test_returns_normal_lag():
     consumer.get_watermark_offsets.return_value = (5, 9)
 
     assert return_metrics_for_partition(consumer, Mock(offset=0, partition=11, topic='test_topic')) == {
-        'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 9
+        'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 9, 'offset': 0
     }
 
 
@@ -76,7 +70,7 @@ def test_logs_errors():
         consumer.get_watermark_offsets.side_effect = mock_error
 
         return_metrics_for_partition(consumer, Mock(offset=-1, partition=11, topic='test_topic')) == {
-            'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 9
+            'partition_id': 11, 'topic_name': 'test_topic', 'high': 9, 'low': 5, 'lag': 9, 'offset': -1
         }
 
         mock_logger.assert_called_once_with(mock_error)

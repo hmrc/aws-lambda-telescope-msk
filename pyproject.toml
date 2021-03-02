@@ -5,8 +5,9 @@ description = "Telescope library for interacting with an MSK/Kafka cluster"
 readme = "README.md"
 authors = ["Vítor Brandão <109226+vitorbrandao@users.noreply.github.com>"]
 maintainers = ["Team Telemetry"]
-packages = [
-  { include = "telemetry" }
+
+packages = [	
+  { include = "telemetry" }	
 ]
 
 [tool.poetry.dependencies]
@@ -20,6 +21,7 @@ graphyte = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+pytest-cov = "^2.11.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

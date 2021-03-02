@@ -3,7 +3,7 @@
 
 import boto3
 from telemetry.telescope_msk.logger import get_app_logger
-from telemetry.telescope_msk.cli import print_markdown, get_console
+from telemetry.telescope_msk.cli import get_console
 from typing import List
 from botocore.config import Config
 
