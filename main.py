@@ -10,7 +10,7 @@ def get_graphite_host():
 
 
 def lambda_handler(event, context):
-    print("HELLO WORLD!!!")
+    print("HELLO WORLD 11111!!!")
     msk_logger = create_app_logger(logging.DEBUG)
     msk_logger.debug("HELLO LOGGER!!!!")
 
