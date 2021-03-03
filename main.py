@@ -10,13 +10,18 @@ def get_graphite_host():
 
 
 def ping(hostname: str):
+    logger = get_app_logger()
     url, port = hostname.split(":")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if s.connect((url, int(port))) == 0:
-        print(f'{hostname} Port is open')
-    else:
-        print(f'{hostname} Port is not open')
-    s.close()
+    s.settimeout(5)
+    try:
+        if s.create_connection((url, int(port))) == 0:
+            print(f'{hostname} Port is open')
+        else:
+            print(f'{hostname} Port is not open')
+        s.close()
+    except Exception as e:
+        logger.error(f"error connecting to {hostname}: {e}")
 
 
 def lambda_handler(event, context):
