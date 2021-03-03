@@ -15,7 +15,7 @@ def ping(hostname: str):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(5)
     try:
-        if s.create_connection((url, int(port))) == 0:
+        if s.connect((url, int(port))) == 0:
             logger.debug(f'{hostname} Port is open')
         else:
             logger.error(f'{hostname} Port is not open')
