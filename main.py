@@ -9,6 +9,10 @@ def get_graphite_host():
     return os.environ.get("graphite_host", "graphite")
 
 
+def ping(hostname: str):
+    return os.system("ping -c 1 " + hostname)
+
+
 def lambda_handler(event, context):
     print("HELLO WORLD 11111!!!")
     msk_logger = create_app_logger(logging.DEBUG)
@@ -23,6 +27,12 @@ def lambda_handler(event, context):
         graphite_host = get_graphite_host()
         bootstrap_servers = get_plaintext_bootstrap_servers()
         msk_logger.debug(bootstrap_servers)
+
+        bootstrap_servers_list = bootstrap_servers.split(",")
+        for server in bootstrap_servers_list:
+            print(f'broker:{server}, result:{ping(server)}')
+
+
 
         msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
         msk_logger.debug(f'consumer {msk_consumer}')
