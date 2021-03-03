@@ -3,14 +3,20 @@ from telemetry.telescope_msk import get_graphite_host, get_plaintext_bootstrap_s
 import os
 import logging
 from telemetry.telescope_msk.logger import create_app_logger
-
+import socket
 
 def get_graphite_host():
     return os.environ.get("graphite_host", "graphite")
 
 
 def ping(hostname: str):
-    return os.system("ping -c 1 " + hostname)
+    url, port = hostname.split(":")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if s.connect((url, port)) == 0:
+        print(f'{hostname} Port is open')
+    else:
+        print(f'{hostname} Port is not open')
+    s.close()
 
 
 def lambda_handler(event, context):
@@ -28,9 +34,10 @@ def lambda_handler(event, context):
         bootstrap_servers = get_plaintext_bootstrap_servers()
         msk_logger.debug(bootstrap_servers)
 
-        bootstrap_servers_list = bootstrap_servers.split(",")
-        for server in bootstrap_servers_list:
-            print(f'broker:{server}, result:{ping(server)}')
+
+        for server in bootstrap_servers.split(","):
+            ping(server)
+
 
 
 
