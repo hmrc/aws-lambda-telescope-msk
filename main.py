@@ -12,7 +12,7 @@ def get_graphite_host():
 def ping(hostname: str):
     url, port = hostname.split(":")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if s.connect((url, port)) == 0:
+    if s.connect((url, int(port))) == 0:
         print(f'{hostname} Port is open')
     else:
         print(f'{hostname} Port is not open')
