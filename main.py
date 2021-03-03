@@ -39,12 +39,8 @@ def lambda_handler(event, context):
         bootstrap_servers = get_plaintext_bootstrap_servers()
         msk_logger.debug(bootstrap_servers)
 
-
-        for server in bootstrap_servers.split(","):
-            ping(server)
-
-
-
+        # for server in bootstrap_servers.split(","):
+        #     ping(server)
 
         msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
         msk_logger.debug(f'consumer {msk_consumer}')
