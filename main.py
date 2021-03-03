@@ -2,7 +2,7 @@ from telemetry.telescope_msk import get_graphite_host, get_plaintext_bootstrap_s
     publish_metrics, publish_metric_sums
 import os
 import logging
-from telemetry.telescope_msk.logger import create_app_logger
+from telemetry.telescope_msk.logger import create_app_logger, get_app_logger
 import socket
 
 def get_graphite_host():
@@ -16,9 +16,9 @@ def ping(hostname: str):
     s.settimeout(5)
     try:
         if s.create_connection((url, int(port))) == 0:
-            print(f'{hostname} Port is open')
+            logger.debug(f'{hostname} Port is open')
         else:
-            print(f'{hostname} Port is not open')
+            logger.error(f'{hostname} Port is not open')
         s.close()
     except Exception as e:
         logger.error(f"error connecting to {hostname}: {e}")
