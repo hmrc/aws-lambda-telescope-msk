@@ -8,7 +8,9 @@ from typing import List
 from botocore.config import Config
 
 my_config = Config(
-    region_name='eu-west-2'
+    region_name='eu-west-2',
+    connect_timeout=10,
+    read_timeout=10
 )
 
 DEFAULT_CLUSTER_NAME = 'msk-cluster'
