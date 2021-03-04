@@ -26,7 +26,7 @@ def ping(hostname: str):
 
 def lambda_handler(event, context):
     msk_logger = create_app_logger(logging.DEBUG)
-    msk_logger.debug("HELLO WORLD5!!")
+    msk_logger.debug("HELLO WORLD6!!")
 
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
