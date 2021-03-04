@@ -12,22 +12,21 @@ def get_graphite_host():
 def ping(hostname: str):
     logger = get_app_logger()
     url, port = hostname.split(":")
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(5)
-    logger.debug(f'pinging: {hostname}')
-    try:
-        s.connect((url, int(port)))
-        s.shutdown(socket.SHUT_RDWR)
-        logger.debug(f'{hostname} Port is open')
-    except Exception as e:
-        logger.error(f"error connecting to {hostname}: {e}")
-    finally:
-        s.close()
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        s.settimeout(5)
+        logger.debug(f'pinging: {hostname}')
+        try:
+            s.connect((url, int(port)))
+            logger.debug(f'{hostname} Port is open')
+        except Exception as e:
+            raise Exception(f"error connecting to {hostname}: {e}")
+        finally:
+            s.close()
 
 
 def lambda_handler(event, context):
     msk_logger = create_app_logger(logging.DEBUG)
-    msk_logger.debug("HELLO WORLD3!!")
+    msk_logger.debug("HELLO WORLD4!!")
 
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
@@ -39,8 +38,8 @@ def lambda_handler(event, context):
         bootstrap_servers = get_plaintext_bootstrap_servers()
         msk_logger.debug(bootstrap_servers)
 
-        # for server in bootstrap_servers.split(","):
-        #     ping(server)
+        for server in bootstrap_servers.split(","):
+            ping(server)
 
         msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
         msk_logger.debug(f'consumer {msk_consumer}')
