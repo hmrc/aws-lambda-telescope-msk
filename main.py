@@ -1,3 +1,5 @@
+from contextlib import closing
+
 from telemetry.telescope_msk import get_graphite_host, get_plaintext_bootstrap_servers, get_consumer, list_offsets, \
     publish_metrics, publish_metric_sums
 import os
@@ -15,7 +17,7 @@ def get_env_bootstrap_servers():
 def ping(hostname: str):
     logger = get_app_logger()
     url, port = hostname.split(":")
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.settimeout(5)
         logger.debug(f'pinging: {hostname}')
         try:
