@@ -9,7 +9,7 @@ def get_graphite_host():
     return os.environ.get("graphite_host", "graphite")
 
 def get_env_bootstrap_servers():
-    return os.environ.get("msk_bootstrap_brokers")
+    return os.environ.get("bootstrap_brokers")
 
 
 def ping(hostname: str):
