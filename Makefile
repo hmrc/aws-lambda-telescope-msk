@@ -64,8 +64,7 @@ package:
 	# @zip -r build/artifacts/${LAMBDA_NAME}.zip telemetry
 	@zip -r build/artifacts/${LAMBDA_NAME}.zip main.py telemetry
 	@cd build/deps && zip -r ../artifacts/${LAMBDA_NAME}.zip . && cd -
-	@openssl dgst -sha256 -binary build/artifacts/${LAMBDA_NAME}.zip | openssl enc -base64 > build/artifacts/${LAMBDA_NAME}.zip.base64sha256
-	file --mime-type build/artifacts/${LAMBDA_NAME}.zip.base64sha256
+	@openssl dgst -sha256 -binary build/artifacts/${LAMBDA_NAME}.zip | openssl enc -base64 > build/artifacts/${LAMBDA_NAME}-hash.txt
 .PHONY: package
 
 publish:
