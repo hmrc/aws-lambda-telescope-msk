@@ -8,6 +8,9 @@ import socket
 def get_graphite_host():
     return os.environ.get("graphite_host", "graphite")
 
+def get_env_bootstrap_servers():
+    return os.environ.get("msk_bootstrap_brokers")
+
 
 def ping(hostname: str):
     logger = get_app_logger()
@@ -26,7 +29,7 @@ def ping(hostname: str):
 
 def lambda_handler(event, context):
     msk_logger = create_app_logger(logging.DEBUG)
-    msk_logger.debug("HELLO WORLD6!!")
+    msk_logger.debug("HELLO WORLD7!!")
 
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
@@ -35,12 +38,16 @@ def lambda_handler(event, context):
 
     try:
         graphite_host = get_graphite_host()
-        bootstrap_servers = get_plaintext_bootstrap_servers()
+        bootstrap_servers = get_env_bootstrap_servers()
+        # bootstrap_servers = get_plaintext_bootstrap_servers()
         msk_logger.debug(bootstrap_servers)
 
         for server in bootstrap_servers.split(","):
             ping(server)
+    except Exception as e:
+        msk_logger.error(f'Cant connect to brokers: {bootstrap_servers}, error:{e}')
 
+    try:
         msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
         msk_logger.debug(f'consumer {msk_consumer}')
         metrics = list_offsets(msk_consumer)
