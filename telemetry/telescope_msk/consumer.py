@@ -55,6 +55,7 @@ def get_committed_partitions_for_topic(consumer: Consumer, topic: TopicMetadata)
     if topic.error is not None:
         logger.error(topic.error)
 
+    print(topic.partitions)
     # Construct TopicPartition list of partitions to query
     partitions = [confluent_kafka.TopicPartition(name, partition) for partition in topic.partitions]
 
