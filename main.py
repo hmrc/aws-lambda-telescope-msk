@@ -50,7 +50,7 @@ def lambda_handler(event, context):
         msk_logger.error(f'Cant connect to brokers: {bootstrap_servers}, error:{e}')
 
     try:
-        msk_consumer = get_consumer(bootstrap_servers, 'telescope-msk')
+        msk_consumer = get_consumer(bootstrap_servers, 'logstash')
         msk_logger.debug(f'consumer {msk_consumer}')
         metrics = list_offsets(msk_consumer)
         msk_consumer.close()
