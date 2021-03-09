@@ -61,6 +61,8 @@ def lambda_handler(event, context):
     try:
 
         consumer_groups_topic_names = get_consumer_groups_topic_names()
+        msk_logger.log(consumer_groups_topic_names)
+        msk_logger.log(type(consumer_groups_topic_names))
         for group_id in consumer_groups_topic_names:
             topic_name = consumer_groups_topic_names[group_id]
             msk_consumer = get_consumer(bootstrap_servers, group_id)
