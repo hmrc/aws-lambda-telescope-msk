@@ -21,7 +21,7 @@ def get_consumer(bootstrap_servers: str, group_id: str) -> Consumer:
 
 
 def list_topics(consumer: Consumer) -> list:
-    logger = get_app_logger()
+
     metadata = consumer.list_topics(timeout=10)
     # filters out __consumer_offsets and __amazon_msk_canary etc
     return [metadata.topics[topic_name] for topic_name in metadata.topics
@@ -46,16 +46,15 @@ def list_offsets(consumer: Consumer) -> list:
 
 
 def list_offsets_for_topic(consumer: Consumer, topic_name: str) -> list:
-    logger = get_app_logger()
-    offsets = []
+    metadata = consumer.list_topics(timeout=10)
+    topic = metadata.topics.get(topic_name)
+    if topic is not None:
+        offsets = []
+        for partition in get_committed_partitions_for_topic(consumer, topic):
+            offsets.append(return_metrics_for_partition(consumer, partition))
+        return offsets
 
-    topics = list_topics(consumer)
-    logger.debug(topics)
-    for topic in topics:
-        if topic.topic == topic_name:
-            for partition in get_committed_partitions_for_topic(consumer, topic):
-                offsets.append(return_metrics_for_partition(consumer, partition))
-    return offsets
+    raise Exception(f'Unable to find topic with name: {topic_name}')
 
 
 def get_partitions_for_topic(topic: TopicMetadata) -> list:
@@ -102,14 +101,3 @@ def return_metrics_for_partition(consumer: Consumer, partition: confluent_kafka.
     except Exception as e:
         print("exception raised")
         logger.error(e)
-
-
-
-######MORE METRICS
-###RANGE  HI-LO
-###DISTANCE TO LO offset-LO
-###PARTITION LAG BY GROUP VS CONSUMER LAG BY GROUP?
-###LOG SIZE BY TOPIC
-###MESSAGES IN BY TOPIC
-###AVERAGE PARTITION LAG
-###OFFSET AS % OF RANGE
