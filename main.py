@@ -1,17 +1,26 @@
+import ast
 from contextlib import closing
 
 from telemetry.telescope_msk import get_graphite_host, get_plaintext_bootstrap_servers, get_consumer, list_offsets, \
-    publish_metrics, publish_metric_sums
+    publish_metrics, publish_metric_sums, list_topic_offsets
 import os
 import logging
+
+from telemetry.telescope_msk.consumer import list_offsets_for_topic
 from telemetry.telescope_msk.logger import create_app_logger, get_app_logger
 import socket
+
 
 def get_graphite_host():
     return os.environ.get("graphite_host", "graphite")
 
+
 def get_env_bootstrap_servers():
     return os.environ.get("bootstrap_brokers")
+
+
+def get_consumer_groups_topic_names():
+    return ast.literal_eval(os.environ.get("consumer_group_topic_map", "{}"))
 
 
 def ping(hostname: str):
@@ -50,13 +59,17 @@ def lambda_handler(event, context):
         msk_logger.error(f'Cant connect to brokers: {bootstrap_servers}, error:{e}')
 
     try:
-        msk_consumer = get_consumer(bootstrap_servers, 'logstash')
-        msk_logger.debug(f'consumer {msk_consumer}')
-        metrics = list_offsets(msk_consumer)
-        msk_consumer.close()
 
-        publish_metrics(metrics, graphite_host)
-        publish_metric_sums(metrics, graphite_host)
+        consumer_groups_topic_names = get_consumer_groups_topic_names()
+        for group_id in consumer_groups_topic_names:
+            topic_name = consumer_groups_topic_names[group_id]
+            msk_consumer = get_consumer(bootstrap_servers, group_id)
+
+            metrics = list_offsets_for_topic(msk_consumer, topic_name)
+            msk_consumer.close()
+
+            publish_metrics(metrics, graphite_host)
+            publish_metric_sums(metrics, graphite_host)
         return {
             'success': True
         }

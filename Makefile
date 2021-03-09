@@ -41,9 +41,17 @@ rsync:
 	@./rsync.sh
 .PHONY: rsync
 
-sync-to-ecs: ## Sync local source files to ECS instance
-	@rsync -av bin telemetry 10.3.0.191:~/
+sync-to-ecs: ## Sync local source files to ECS instance, need to change IP address when building new lab/instance
+	@rsync -av bin telemetry 10.3.2.12:~/
 .PHONY: sync-to-ecs
+
+sync-to-ecs-all: ## Sync all files excluding pytest_cache and venv
+	@rsync -av . --exclude .venv .pytest_cache/ 10.3.2.12:~/
+.PHONY: sync-to-ecs-all
+
+install-from-ecs:
+	@curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+	@.poetry/bin/poetry install
 
 SHELL := /usr/bin/env bash
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))

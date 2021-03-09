@@ -1,8 +1,7 @@
 import confluent_kafka
-from confluent_kafka import Consumer
+from confluent_kafka import Consumer, TopicPartition
 from confluent_kafka.admin import TopicMetadata
 from telemetry.telescope_msk.logger import get_app_logger
-
 # autodetect the environment: local vs AWS
 #   if local: tunnel + bootstrap_servers = 'localhost:9092'
 #   else: use bootstrap_servers from boto (get_default_bootstrap_servers())
@@ -12,8 +11,6 @@ from telemetry.telescope_msk.logger import get_app_logger
 # print on screen
 # push this ^ to graphite
 # add https://pypi.org/project/graphyte/ or make sure its installed where this runs
-
-
 
 
 def get_consumer(bootstrap_servers: str, group_id: str) -> Consumer:
@@ -31,7 +28,7 @@ def list_topics(consumer: Consumer) -> list:
             if topic_name in metadata.topics and topic_name[0] != "_"]
 
 
-def list_offsets(consumer: Consumer):
+def list_offsets(consumer: Consumer) -> list:
     logger = get_app_logger()
     offsets = []
     try:
@@ -48,7 +45,20 @@ def list_offsets(consumer: Consumer):
     return offsets
 
 
-def get_committed_partitions_for_topic(consumer: Consumer, topic: TopicMetadata) -> list:
+def list_offsets_for_topic(consumer: Consumer, topic_name: str) -> list:
+    logger = get_app_logger()
+    offsets = []
+
+    topics = list_topics(consumer)
+    logger.debug(topics)
+    for topic in topics:
+        if topic.topic == topic_name:
+            for partition in get_committed_partitions_for_topic(consumer, topic):
+                offsets.append(return_metrics_for_partition(consumer, partition))
+    return offsets
+
+
+def get_partitions_for_topic(topic: TopicMetadata) -> list:
     logger = get_app_logger()
     name = topic.topic
 
@@ -56,16 +66,11 @@ def get_committed_partitions_for_topic(consumer: Consumer, topic: TopicMetadata)
         logger.error(topic.error)
 
     # Construct TopicPartition list of partitions to query
-    partitions = [confluent_kafka.TopicPartition(name, partition) for partition in topic.partitions]
-
-    for partition in partitions:
-        print(partition.topic)
-        print(partition.partition)
-        print(partition.offset)
+    return [confluent_kafka.TopicPartition(name, partition) for partition in topic.partitions]
 
 
-    # Query committed offsets for this group and the given partitions
-    return consumer.committed(partitions, timeout=10)
+def get_committed_partitions_for_topic(consumer: Consumer, topic: TopicPartition) -> list:
+    return consumer.committed(get_partitions_for_topic(topic), timeout=10)
 
 
 def return_metrics_for_partition(consumer: Consumer, partition: confluent_kafka.TopicPartition) -> dict:

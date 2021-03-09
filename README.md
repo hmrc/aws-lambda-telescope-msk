@@ -46,6 +46,8 @@ aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer \
 ```
 
 ### Sync and run in ECS
+### ECS is currently unavailable as of TEL-2300, permissions to run telemetry ecs must be added to the labs security group if wanting to run
+
 
 ```sh
 export ECS_INSTANCE_IP_ADDRESS=10.3.0.191
