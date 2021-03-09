@@ -2,7 +2,7 @@ import ast
 from contextlib import closing
 
 from telemetry.telescope_msk import get_graphite_host, get_plaintext_bootstrap_servers, get_consumer, list_offsets, \
-    publish_metrics, publish_metric_sums, list_topic_offsets
+    publish_metrics, publish_metric_sums
 import os
 import logging
 
