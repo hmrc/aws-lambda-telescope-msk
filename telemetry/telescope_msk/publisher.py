@@ -1,14 +1,13 @@
 from telemetry.telescope_msk.send_graphyte_message import publish_kafka_to_graphite
 
 
-def publish_metrics(metrics: dict, graphite_host: str):
+def publish_metrics(metrics: list, graphite_host: str):
     for metric in metrics:
         keys = ['high', 'low', 'lag', 'offset']
 
         for key in keys:
             value = metric[key]
             # EG: logstash.logs.partition_0.high.$high_watermark
-            # print(create_metric_key(metric, group.id, key)+f"={value}")
             publish_kafka_to_graphite(create_metric_key(metric, key), value, graphite_host)
 
 

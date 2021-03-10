@@ -20,84 +20,77 @@ def get_consumer(bootstrap_servers: str, group_id: str) -> Consumer:
     })
 
 
-def list_topics(consumer: Consumer) -> list:
-
-    metadata = consumer.list_topics(timeout=10)
-    # filters out __consumer_offsets and __amazon_msk_canary etc
-    return [metadata.topics[topic_name] for topic_name in metadata.topics
-            if topic_name in metadata.topics and topic_name[0] != "_"]
-
-
-def list_offsets(consumer: Consumer) -> list:
-    logger = get_app_logger()
-    offsets = []
-    try:
-        topics = list_topics(consumer)
-        logger.debug(topics)
-        for topic in topics:
-            for partition in get_committed_partitions_for_topic(consumer, topic):
-                offsets.append(return_metrics_for_partition(consumer, partition))
-
-    except Exception as e:
-        logger.error(e)
-
-    logger.debug(offsets)
-    return offsets
+# takes a dict of key = group_name, value = topic_name
+def get_metrics_for_groups_and_topics(consumer_groups_topic_names: dict) -> list:
+    metrics = []
+    for group_name in consumer_groups_topic_names:
+        topic_name = consumer_groups_topic_names[group_name]
+        metrics += get_metrics_for_group_and_topic(group_name, topic_name)
 
 
-def list_offsets_for_topic(consumer: Consumer, topic_name: str) -> list:
-    metadata = consumer.list_topics(timeout=10)
-    topic = metadata.topics.get(topic_name)
-    if topic is not None:
-        offsets = []
-        for partition in get_committed_partitions_for_topic(consumer, topic):
-            offsets.append(return_metrics_for_partition(consumer, partition))
-        return offsets
+def get_metrics_for_group_and_topic(bootstrap_servers: str, group_name:str, topic_name:str) -> list:
+    msk_consumer = get_consumer(bootstrap_servers, group_name)
+    msk_consumer.close()
+    return get_metrics_for_topic(msk_consumer, topic_name)
 
-    raise Exception(f'Unable to find topic with name: {topic_name}')
+
+def get_metrics_for_topic(consumer: Consumer, topic_name:str) -> list:
+    # get topic metadata for topic name
+    metadata = consumer.list_topics(topic=topic_name, timeout=10)
+    committed_partitions = consumer.committed(get_partitions_for_topics(metadata),timeout=10)
+    metrics = get_metrics_for_partitions(consumer, committed_partitions)
+    return metrics
+
+# metadata is the ClusterMetadata object returned by consumer.list_topics
+def get_partitions_for_topics(metadata: confluent_kafka.admin.ClusterMetadata) -> list:
+    partitions = []
+    for topic_name in metadata.topics:
+        topic = metadata.topics[topic_name]
+        partitions += get_partitions_for_topic(topic)
+    return partitions
 
 
 def get_partitions_for_topic(topic: TopicMetadata) -> list:
     logger = get_app_logger()
-    name = topic.topic
-
     if topic.error is not None:
         logger.error(topic.error)
+        return []
 
+    name = topic.topic
     # Construct TopicPartition list of partitions to query
-    return [confluent_kafka.TopicPartition(name, partition) for partition in topic.partitions]
+    return [TopicPartition(name, partition) for partition in topic.partitions]
 
 
-def get_committed_partitions_for_topic(consumer: Consumer, topic: TopicPartition) -> list:
-    return consumer.committed(get_partitions_for_topic(topic), timeout=10)
+def get_metrics_for_partitions(consumer, partitions: list) -> list:
+    return [get_metrics_for_partition(consumer, partition) for partition in partitions]
 
 
-def return_metrics_for_partition(consumer: Consumer, partition: confluent_kafka.TopicPartition) -> dict:
-    logger = get_app_logger()
-    try:
-        (low, high) = consumer.get_watermark_offsets(partition, timeout=5, cached=False)
-        # possible negative values for partition offset or high are defined by the following consts
-        # confluent_kafka.OFFSET_BEGINNING == -2
-        # confluent_kafka.OFFSET_END == -1
-        # confluent_kafka.OFFSET_STORED == -1000
-        # confluent_kafka.OFFSET_INVALID == -1001
-        if high < 0:
-            lag = 0  # Unlikely
-        elif partition.offset < 0:
-            # No committed offset, show total message count as lag.
-            # The actual message count may be lower due to compaction
-            # and record deletions.
-            lag = high - low
-        else:
-            lag = high - partition.offset
-        return {
-                "topic_name": partition.topic,
-                "partition_id": partition.partition,
-                "high": high,
-                "low": low,
-                "lag": lag,
-                "offset": partition.offset
-        }
-    except Exception as e:
-        print("exception raised")
-        logger.error(e)
+def get_metrics_for_partition(consumer: Consumer, partition: TopicPartition) -> dict:
+    timeout = 5
+    watermarks = consumer.get_watermark_offsets(partition, timeout=timeout, cached=False)
+    if watermarks is None:
+        raise Exception(f'Getting watermarks for partition:{partition.partition} on topic: {partition.topic} has taken longer than timeout {timeout} seconds')
+
+    (low, high) = watermarks
+    # possible negative values for partition offset or high are defined by the following consts
+    # confluent_kafka.OFFSET_BEGINNING == -2
+    # confluent_kafka.OFFSET_END == -1
+    # confluent_kafka.OFFSET_STORED == -1000
+    # confluent_kafka.OFFSET_INVALID == -1001
+    if high < 0:
+        lag = 0  # Unlikely
+    elif partition.offset < 0:
+        # No committed offset, show total message count as lag.
+        # The actual message count may be lower due to compaction
+        # and record deletions.
+        lag = high - low
+    else:
+        lag = high - partition.offset
+    return {
+            "topic_name": partition.topic,
+            "partition_id": partition.partition,
+            "high": high,
+            "low": low,
+            "lag": lag,
+            "offset": partition.offset
+    }

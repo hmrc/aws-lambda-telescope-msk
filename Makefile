@@ -6,15 +6,6 @@ DOCKER_AWS_VARS = -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_
 
 default: help
 
-help: ## The help text you're reading
-	@grep --no-filename -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-.PHONY: help
-
-remote-setup: ## Prepare a remote ECS EC2 instance to run telescope-msk
-	@curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -o dist/get-poetry.py
-	@./remote-setup.sh
-.PHONY: remote-setup
-
 docker-build-py36: ## Build the Python 3.6 container
 	@docker build -t telemetry/telescope-msk:latest .
 .PHONY: docker-build-py36
@@ -42,11 +33,11 @@ rsync:
 .PHONY: rsync
 
 sync-to-ecs: ## Sync local source files to ECS instance, need to change IP address when building new lab/instance
-	@rsync -av bin telemetry 10.3.2.12:~/
+	@rsync -av bin telemetry 10.3.0.227:~/
 .PHONY: sync-to-ecs
 
 sync-to-ecs-all: ## Sync all files excluding pytest_cache and venv
-	@rsync -av . --exclude .venv .pytest_cache/ 10.3.2.12:~/
+	@rsync -av . --include .python-version --exclude .*/ build/ 10.3.0.227:~/
 .PHONY: sync-to-ecs-all
 
 install-from-ecs:
