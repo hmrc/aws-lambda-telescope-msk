@@ -28,18 +28,20 @@ def get_metrics_for_groups_and_topics(consumer_groups_topic_names: dict) -> list
         metrics += get_metrics_for_group_and_topic(group_name, topic_name)
 
 
-def get_metrics_for_group_and_topic(bootstrap_servers: str, group_name:str, topic_name:str) -> list:
+def get_metrics_for_group_and_topic(bootstrap_servers: str, group_name: str, topic_name:str) -> list:
     msk_consumer = get_consumer(bootstrap_servers, group_name)
+    metrics = get_metrics_for_topic(msk_consumer, topic_name)
     msk_consumer.close()
-    return get_metrics_for_topic(msk_consumer, topic_name)
+    return metrics
 
 
-def get_metrics_for_topic(consumer: Consumer, topic_name:str) -> list:
+def get_metrics_for_topic(consumer: Consumer, topic_name: str) -> list:
     # get topic metadata for topic name
     metadata = consumer.list_topics(topic=topic_name, timeout=10)
     committed_partitions = consumer.committed(get_partitions_for_topics(metadata),timeout=10)
     metrics = get_metrics_for_partitions(consumer, committed_partitions)
     return metrics
+
 
 # metadata is the ClusterMetadata object returned by consumer.list_topics
 def get_partitions_for_topics(metadata: confluent_kafka.admin.ClusterMetadata) -> list:
@@ -52,6 +54,7 @@ def get_partitions_for_topics(metadata: confluent_kafka.admin.ClusterMetadata) -
 
 def get_partitions_for_topic(topic: TopicMetadata) -> list:
     logger = get_app_logger()
+    print(type(topic.error))
     if topic.error is not None:
         logger.error(topic.error)
         return []
