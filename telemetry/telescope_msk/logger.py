@@ -1,10 +1,10 @@
 import logging
 import sys
 
-from telemetry.telescope_msk import APP_NAME
+from telemetry.telescope_msk.app_info import APP_NAME
 
 
-def create_app_logger(level: str = logging.INFO):
+def create_app_logger(level = logging.INFO):
     level = level.upper() if isinstance(level, str) else level
 
     logger = logging.getLogger(APP_NAME)

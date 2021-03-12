@@ -1,5 +1,7 @@
 # Telescope MSK
 
+Hello, Sam!
+
 Telescope library for interacting with an MSK/Kafka cluster.
 
 ## Requirements
@@ -23,6 +25,37 @@ Example:
 ```sh
 aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer \
   poetry run bin/consumer-groups.py --help
+```
+
+## Local development
+
+To run locally the plaintext bootstrap cluster host names must be added to local host IP address:
+```
+127.0.0.1       localhost       b-1.msk-cluster.mmfn29.c4.kafka.eu-west-2.amazonaws.com:9092,b-2.msk-cluster.mmfn29.c
+4.kafka.eu-west-2.amazonaws.com:9092,b-3.msk-cluster.mmfn29.c4.kafka.eu-west-2.amazonaws.com:9092
+```
+Fetch the ip from ecs node on aws console,
+Then an SSH tunnel must be set up using an the ip to forward the port to localhost:
+```sh
+ssh -L 9092:localhost:9092 10.3.0.191
+```
+Once a port is open you can run the standard scripts as above:
+```sh
+aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer \
+  poetry run bin/consumer-groups.py --help
+```
+
+### Sync and run in ECS
+### ECS is currently unavailable as of TEL-2300, permissions to run telemetry ecs must be added to the labs security group if wanting to run
+
+
+```sh
+export ECS_INSTANCE_IP_ADDRESS=10.3.0.191
+ssh $ECS_INSTANCE_IP_ADDRESS
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+./poetry/bin/poetry install
+export AWS_DEFAULT_REGION=eu-west-2
+python3 .poetry/bin/poetry run python3 bin/consumer-groups.py
 ```
 
 ## License
