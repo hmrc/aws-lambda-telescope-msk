@@ -17,6 +17,6 @@ def ping_broker(hostname: str):
         try:
             s.connect((url, int(port)))
         except Exception as e:
-            raise Exception(f"Error connecting to broker at: {hostname}: {e}")
+            logger.error(f'Error connecting to broker at: {hostname}: {e}')
         finally:
             s.close()
