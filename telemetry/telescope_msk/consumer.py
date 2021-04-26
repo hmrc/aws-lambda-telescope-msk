@@ -55,7 +55,7 @@ def get_partitions_for_topics(metadata: confluent_kafka.admin.ClusterMetadata) -
 
 def get_partitions_for_topic(topic: TopicMetadata) -> list:
     logger = get_app_logger()
-    print(type(topic.error))
+
     if topic.error is not None:
         logger.error(topic.error)
         return []
