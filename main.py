@@ -1,6 +1,7 @@
 import ast
 import os
 import logging
+import json
 
 from telemetry.telescope_msk.broker import ping_brokers
 from telemetry.telescope_msk.consumer import get_metrics_for_groups_and_topics
@@ -20,7 +21,8 @@ def get_env_bootstrap_servers():
 
 def get_consumer_groups_topic_names():
     try:
-        output = ast.literal_eval(os.environ.get("consumer_group_topic_map", "{}"))
+        env_var = os.environ.get("consumer_group_topic_map", "{}")
+        output = json.loads(env_var)
         if type(output) != dict:
             raise Exception('consumer_group_topic_map is not type dict')
     except Exception as e:
