@@ -2,8 +2,8 @@
 #  https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kafka.html#Kafka.Client.list_clusters
 
 import boto3
-from telemetry.telescope_msk.logger import get_app_logger
-from telemetry.telescope_msk.cli import get_console
+from srctelescope_msk.logger import get_app_logger
+from srctelescope_msk.cli import get_console
 from typing import List
 from botocore.config import Config
 
