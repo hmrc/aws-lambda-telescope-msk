@@ -2,20 +2,16 @@
 #  https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kafka.html#Kafka.Client.list_clusters
 
 import boto3
-from srctelescope_msk.logger import get_app_logger
-from srctelescope_msk.cli import get_console
+from src.telescope_msk.logger import get_app_logger
+from src.telescope_msk.cli import get_console
 from typing import List
 from botocore.config import Config
 
-my_config = Config(
-    region_name='eu-west-2',
-    connect_timeout=10,
-    read_timeout=10
-)
+my_config = Config(region_name="eu-west-2", connect_timeout=10, read_timeout=10)
 
-DEFAULT_CLUSTER_NAME = 'msk-cluster'
+DEFAULT_CLUSTER_NAME = "msk-cluster"
 
-msk_client = boto3.client('kafka', config=my_config)
+msk_client = boto3.client("kafka", config=my_config)
 logger = get_app_logger()
 
 
@@ -29,19 +25,19 @@ class MskCluster:
 
     @property
     def arn(self):
-        return self.info['ClusterArn']
+        return self.info["ClusterArn"]
 
     @property
     def creation_time(self):
-        return self.info['CreationTime']
+        return self.info["CreationTime"]
 
     @property
     def kafka_version(self):
-        return self.info['CurrentBrokerSoftwareInfo']['KafkaVersion']
+        return self.info["CurrentBrokerSoftwareInfo"]["KafkaVersion"]
 
     @property
     def status(self):
-        return self.info['State']
+        return self.info["State"]
 
 
 class BootstrapServer:
@@ -86,7 +82,7 @@ def get_cluster_arn(cluster_name: str) -> str:
     logger.debug("Getting the cluster ARN for '%s'" % cluster_name)
     response = msk_client.list_clusters(ClusterNameFilter=cluster_name, MaxResults=1)
     try:
-        cluster_arn = response['ClusterInfoList'][0]['ClusterArn']
+        cluster_arn = response["ClusterInfoList"][0]["ClusterArn"]
         logger.debug("MSK cluster ARN: %s" % cluster_arn)
 
         return cluster_arn
@@ -95,25 +91,21 @@ def get_cluster_arn(cluster_name: str) -> str:
 
 
 def get_cluster_info(cluster_arn: str) -> MskCluster:
-    response = msk_client.describe_cluster(
-        ClusterArn=cluster_arn
-    )
+    response = msk_client.describe_cluster(ClusterArn=cluster_arn)
 
-    return MskCluster(response['ClusterInfo'])
+    return MskCluster(response["ClusterInfo"])
 
 
 def get_bootstrap_servers(cluster_arn: str) -> BootstrapServers:
     """Returns a list of host/port pairs for establishing the initial connection to the Kafka cluster. Use this property
-     in your Kafka producer or consumer configuration.
+    in your Kafka producer or consumer configuration.
     """
     logger.debug("Fetching bootstrap servers for '%s'" % cluster_arn)
-    response = msk_client.get_bootstrap_brokers(
-        ClusterArn=cluster_arn
-    )
+    response = msk_client.get_bootstrap_brokers(ClusterArn=cluster_arn)
 
     return BootstrapServers(
-        plaintext=response['BootstrapBrokerString'],
-        tls=response['BootstrapBrokerStringTls']
+        plaintext=response["BootstrapBrokerString"],
+        tls=response["BootstrapBrokerStringTls"],
     )
 
 
@@ -147,4 +139,3 @@ def print_summary():
     console.print(f"\n[cyan]Bootstrap servers[/cyan]\n")
     console.print(f"  TLS: [yellow]{bootstrap_servers.tls_str}[/yellow]")
     console.print(f"  Plaintext: [yellow]{bootstrap_servers.plaintext_str}[/yellow]")
-

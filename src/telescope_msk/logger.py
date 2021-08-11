@@ -1,10 +1,10 @@
 import logging
 import sys
 
-from srctelescope_msk.app_info import APP_NAME
+from src.telescope_msk.app_info import APP_NAME
 
 
-def create_app_logger(level = logging.INFO):
+def create_app_logger(level=logging.INFO):
     level = level.upper() if isinstance(level, str) else level
 
     logger = logging.getLogger(APP_NAME)
@@ -12,7 +12,7 @@ def create_app_logger(level = logging.INFO):
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(level)
-    formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s')
+    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 

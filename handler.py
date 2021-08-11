@@ -24,13 +24,15 @@ def get_consumer_groups_topic_names():
         env_var = os.environ.get("consumer_group_topic_map", "{}")
         output = json.loads(env_var)
         if type(output) != dict:
-            raise Exception('consumer_group_topic_map is not type dict')
+            raise Exception("consumer_group_topic_map is not type dict")
     except Exception as e:
-        get_app_logger().error(f'Unable to get consumer_group to topic name map from env var "consumer_group_topic_map with error: {e}"')
+        get_app_logger().error(
+            f'Unable to get consumer_group to topic name map from env var "consumer_group_topic_map with error: {e}"'
+        )
 
     return output
 
-   
+
 def lambda_handler(event, context):
     msk_logger = get_app_logger()
     try:
@@ -48,7 +50,9 @@ def lambda_handler(event, context):
     msk_logger.debug(consumer_groups_topic_names)
 
     try:
-        metrics = get_metrics_for_groups_and_topics(bootstrap_servers, consumer_groups_topic_names)
+        metrics = get_metrics_for_groups_and_topics(
+            bootstrap_servers, consumer_groups_topic_names
+        )
         msk_logger.debug(metrics)
         publish_metrics(metrics, graphite_host)
         publish_metric_sums(metrics, graphite_host)

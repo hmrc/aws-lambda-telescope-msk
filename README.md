@@ -18,8 +18,8 @@ Install dependencies using Poetry:
 poetry install
 ```
 
-All available interactions with the MSK cluster are packaged as individual Python scripts in `bin/`. 
-Run each script as `poetry run bin/<script.py>` prefixed with the desired AWS profile. 
+All available interactions with the MSK cluster are packaged as individual Python scripts in `bin/`.
+Run each script as `poetry run bin/<script.py>` prefixed with the desired AWS profile.
 Example:
 
 ```sh
