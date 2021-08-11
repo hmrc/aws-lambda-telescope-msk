@@ -10,7 +10,7 @@ POETRY_VIRTUALENVS_IN_PROJECT ?= true
 
 TELEMETRY_INTERNAL_BASE_ACCOUNT_ID := 634456480543
 BUCKET_NAME := telemetry-lambda-artifacts-internal-base
-LAMBDA_NAME := ecs_riemann_reload
+LAMBDA_NAME := telescope_msk
 
 help: ## The help text you're reading
 	@grep --no-filename -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
