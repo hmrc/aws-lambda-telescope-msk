@@ -1,78 +1,94 @@
 SHELL := /usr/bin/env bash
-PWD = $(shell pwd)
+POETRY_OK := $(shell type -P poetry)
+POETRY_PATH := $(shell poetry env info --path)
+POETRY_REQUIRED := $(shell cat .poetry-version)
+PYTHON_OK := $(shell type -P python)
+PYTHON_VERSION ?= $(shell python -V | cut -d' ' -f2)
+PYTHON_REQUIRED := $(shell cat .python-version)
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-
-DOCKER_AWS_VARS = -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
-
-default: help
-
-docker-build-py36: ## Build the Python 3.6 container
-	@docker build -t telemetry/telescope-msk:latest .
-.PHONY: docker-build-py36
-
-build: docker-build-py36 ## Install local Poetry dependencies and build the Python 3.6 image
-	$(MAKE) poetry-install
-	@poetry export -f requirements.txt --without-hashes -o requirements.txt
-	$(MAKE) poetry-build
-.PHONY: build
-
-poetry-install: ## Downloads and installs all the dependencies outlined in the poetry.lock file
-	@SODIUM_INSTALL=system poetry install -vvv
-.PHONY: poetry-install
-
-poetry-build: ## Builds a tarball and a wheel Python packages
-	@poetry build
-.PHONY: poetry-build
-
-poetry-update: ## Update the dependencies as according to the pyproject.toml file
-	@poetry update -vvv
-.PHONY: poetry-update
-
-rsync:
-	@./rsync.sh
-.PHONY: rsync
-
-sync-to-ecs: ## Sync local source files to ECS instance, need to change IP address when building new lab/instance
-	@rsync -av bin telemetry 10.3.0.227:~/
-.PHONY: sync-to-ecs
-
-sync-to-ecs-all: ## Sync all files excluding pytest_cache and venv
-	@rsync -av . --include .python-version --exclude .*/ build/ 10.3.0.227:~/
-.PHONY: sync-to-ecs-all
-
-install-from-ecs:
-	@curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-	@.poetry/bin/poetry install
-
-SHELL := /usr/bin/env bash
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+POETRY_VIRTUALENVS_IN_PROJECT ?= true
 
 TELEMETRY_INTERNAL_BASE_ACCOUNT_ID := 634456480543
 BUCKET_NAME := telemetry-lambda-artifacts-internal-base
-LAMBDA_NAME := telescope-msk
+LAMBDA_NAME := ecs_riemann_reload
 
 help: ## The help text you're reading
 	@grep --no-filename -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
 
-package:
-	@mkdir -p build/deps
-	@poetry export -f requirements.txt --without-hashes -o build/deps/requirements.txt
-	@pip3 install --target build/deps -r build/deps/requirements.txt
-	@mkdir -p build/artifacts
-	# @zip -r build/artifacts/${LAMBDA_NAME}.zip telemetry
-	@zip -r build/artifacts/${LAMBDA_NAME}.zip main.py telemetry
-	@cd build/deps && zip -r ../artifacts/${LAMBDA_NAME}.zip . && cd -
-	@openssl dgst -sha256 -binary build/artifacts/${LAMBDA_NAME}.zip | openssl enc -base64 > build/artifacts/${LAMBDA_NAME}-hash.txt
+clean: ## Clean the environment
+	@poetry run task clean
+.PHONY: clean
+
+check_poetry: check_python ## Check Poetry installation
+    ifeq ('$(POETRY_OK)','')
+	    $(error package 'poetry' not found!)
+    else
+	    @echo Found Poetry ${POETRY_REQUIRED}
+    endif
+.PHONY: check_poetry
+
+check_python: ## Check Python installation
+    ifeq ('$(PYTHON_OK)','')
+	    $(error python interpreter: 'python' not found!)
+    else
+	    @echo Found Python
+    endif
+    ifneq ('$(PYTHON_REQUIRED)','$(PYTHON_VERSION)')
+	    $(error incorrect version of python found: '${PYTHON_VERSION}'. Expected '${PYTHON_REQUIRED}'!)
+    else
+	    @echo Found Python ${PYTHON_REQUIRED}
+    endif
+.PHONY: check_python
+
+reset: ## Teardown tooling
+	rm -rfv $(POETRY_PATH)
+.PHONY: reset
+
+setup: check_poetry ## Setup virtualenv & dependencies using poetry and set-up the git hook scripts
+	@export POETRY_VIRTUALENVS_IN_PROJECT=$(POETRY_VIRTUALENVS_IN_PROJECT) && poetry run pip install --upgrade pip
+	@poetry install --no-root
+	@poetry run pre-commit install
+
+bandit: setup ## Run bandit against python code
+	@poetry run task bandit
+.PHONY: bandit
+
+black: setup ## Run black against python code
+	@poetry run task black_reformat
+.PHONY: black
+
+cut_release: ## Cut release
+	@poetry run task cut_release
+.PHONY: cut_release
+
+safety: setup ## Run Safety
+	@poetry run task safety
+.PHONY: safety
+
+test: setup ## Run functional and unit tests
+	@poetry run task test
+.PHONY: test
+
+package: ## Run a SAM build
+	@poetry run task assemble
 .PHONY: package
 
-publish:
-	@if [ "$$(aws sts get-caller-identity | jq -r .Account)" != "${TELEMETRY_INTERNAL_BASE_ACCOUNT_ID}" ]; then \
-  		echo "Please make sure that you execute this target with a \"telemetry-internal-base\" AWS profile. Exiting."; exit 1; fi
-	aws s3 cp build/artifacts/${LAMBDA_NAME}.zip s3://${BUCKET_NAME}/build-telescope-msk-lambda/${LAMBDA_NAME}.zip --acl=bucket-owner-full-control
-	aws s3 cp build/artifacts/${LAMBDA_NAME}.zip.base64sha256 s3://${BUCKET_NAME}/build-telescope-msk-lambda/${LAMBDA_NAME}.zip.base64sha256 --content-type text/plain --acl=bucket-owner-full-control
+prepare_release: ## Runs prepare release
+	@poetry run task prepare_release
+.PHONY: prepare_release
+
+publish: ## Build and push lambda zip to S3 (requires MDTP_ENVIRONMENT to be set to an environment)
+	@poetry run task publish
 .PHONY: publish
 
-test:
-	@poetry run pytest --cov=telemetry --full-trace --verbose
-.PHONY: test
+unittest: setup ## Run unit tests
+	@poetry run task unittest
+.PHONY: unittest
+
+verify: ## Run task verify
+	@poetry run task verify
+.PHONY: verify
+
+verify_package_and_publish: setup verify prepare_release package publish cut_release
+.PHONY: verify_package_and_publish
