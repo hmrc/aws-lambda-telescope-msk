@@ -1,4 +1,4 @@
-from src.telescope_msk.logger import get_app_logger
+from telescope_msk.logger import get_app_logger
 import socket
 from contextlib import closing
 

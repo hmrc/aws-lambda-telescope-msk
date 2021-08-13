@@ -1,8 +1,8 @@
 from unittest.mock import patch
-from src.telescope_msk.publisher import publish_metrics, publish_metric_sums
+from telescope_msk.publisher import publish_metrics, publish_metric_sums
 
 
-@patch("src.telescope_msk.publisher.publish_kafka_to_graphite")
+@patch("telescope_msk.publisher.publish_kafka_to_graphite")
 def test_publish_metrics(mock_publish):
 
     publish_metrics(
@@ -25,7 +25,7 @@ def test_publish_metrics(mock_publish):
     mock_publish.assert_any_call("test_topic.partition_11.offset", -1, "graphite")
 
 
-@patch("src.telescope_msk.publisher.publish_kafka_to_graphite")
+@patch("telescope_msk.publisher.publish_kafka_to_graphite")
 def test_publish_metric_sums(mock_publish):
     publish_metric_sums(
         [

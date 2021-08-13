@@ -3,10 +3,10 @@ import os
 import logging
 import json
 
-from src.telescope_msk.broker import ping_brokers
-from src.telescope_msk.consumer import get_metrics_for_groups_and_topics
-from src.telescope_msk.logger import create_app_logger, get_app_logger
-from src.telescope_msk.publisher import publish_metrics, publish_metric_sums
+from telescope_msk.broker import ping_brokers
+from telescope_msk.consumer import get_metrics_for_groups_and_topics
+from telescope_msk.logger import create_app_logger, get_app_logger
+from telescope_msk.publisher import publish_metrics, publish_metric_sums
 
 create_app_logger(logging.DEBUG)
 

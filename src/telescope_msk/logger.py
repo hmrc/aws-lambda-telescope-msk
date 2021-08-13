@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from src.telescope_msk.app_info import APP_NAME
+from telescope_msk.app_info import APP_NAME
 
 
 def create_app_logger(level=logging.INFO):

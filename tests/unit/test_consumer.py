@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, Mock, patch
 from unittest import mock, TestCase
 
-from src.telescope_msk.consumer import (
+from telescope_msk.consumer import (
     get_consumer,
     get_metrics_for_group_and_topic,
     get_metrics_for_topic,
@@ -12,7 +12,7 @@ from src.telescope_msk.consumer import (
     get_metrics_for_groups_and_topics,
 )
 from confluent_kafka import Consumer
-from src.telescope_msk.logger import get_app_logger
+from telescope_msk.logger import get_app_logger
 
 
 class GetConsumer(TestCase):
@@ -26,7 +26,7 @@ class GetConsumer(TestCase):
 class GetMetricsForGroupsAndTopics:
     def test_calls_get_metrics_for_group_and_topic_for_each_key_value(self):
         with patch(
-            "src.telescope_msk.consumer.get_metrics_for_group_and_topic"
+            "telescope_msk.consumer.get_metrics_for_group_and_topic"
         ) as mock_get_metrics:
             consumer_groups_topic_names = {"group1", "topic1"}
 
@@ -38,7 +38,7 @@ class GetMetricsForGroupsAndTopics:
 class GetMetricsForGroupAndTopic(TestCase):
     def test_creates_consumer_on_group(self):
         # consumer must be on the group otherwise partition offsets can't be read and are returned as OFFSET_INVALID
-        with patch("src.telescope_msk.consumer.get_consumer") as mock_get_consumer:
+        with patch("telescope_msk.consumer.get_consumer") as mock_get_consumer:
 
             get_metrics_for_group_and_topic("bootstrap_servers", "group", "topic")
 
@@ -46,11 +46,11 @@ class GetMetricsForGroupAndTopic(TestCase):
 
     def test_calls_get_metrics_for_topic(self):
         # consumer must be on the group otherwise partition offsets can't be read and are returned as OFFSET_INVALID
-        with patch("src.telescope_msk.consumer.get_consumer") as mock_get_consumer:
+        with patch("telescope_msk.consumer.get_consumer") as mock_get_consumer:
             mock_consumer = MagicMock()
             mock_get_consumer.return_value = mock_consumer
             with patch(
-                "src.telescope_msk.consumer.get_metrics_for_topic"
+                "telescope_msk.consumer.get_metrics_for_topic"
             ) as get_metrics:
                 get_metrics.return_value = [{"metrics": "foo"}]
                 out = get_metrics_for_group_and_topic(
@@ -82,7 +82,7 @@ class GetPartitionsForTopic(TestCase):
 
     def test_TopicPartitions_are_created(self):
         # with patch('confluent_kafka.TopicPartition') as mockTopicPartition:
-        with patch("src.telescope_msk.consumer.TopicPartition") as mockTopicPartition:
+        with patch("telescope_msk.consumer.TopicPartition") as mockTopicPartition:
 
             test_topic = "test_topic_01"
             mock_partition = 6
@@ -97,7 +97,7 @@ class GetPartitionsForTopic(TestCase):
 class GetPartitionsForTopics(TestCase):
     def test_calls_through_for_each_topic(self):
         with patch(
-            "src.telescope_msk.consumer.get_partitions_for_topic"
+            "telescope_msk.consumer.get_partitions_for_topic"
         ) as get_partitions:
             get_partitions.return_value = []
             mock_topics = {
@@ -118,7 +118,7 @@ class GetMetricsForPartitions(TestCase):
     def test_calls_through_for_each_partition(self):
         consumer = MagicMock()
         with patch(
-            "src.telescope_msk.consumer.get_metrics_for_partition"
+            "telescope_msk.consumer.get_metrics_for_partition"
         ) as get_metrics:
             get_metrics.return_value = {"offset": 10}
 

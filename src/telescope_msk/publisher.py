@@ -1,4 +1,4 @@
-from src.telescope_msk.send_graphyte_message import publish_kafka_to_graphite
+from telescope_msk.send_graphyte_message import publish_kafka_to_graphite
 
 
 def publish_metrics(metrics: list, graphite_host: str):

@@ -1,7 +1,7 @@
 import graphyte
 
-from src.telescope_msk.app_info import METRICS_PREFIX
-from src.telescope_msk.logger import get_app_logger
+from telescope_msk.app_info import METRICS_PREFIX
+from telescope_msk.logger import get_app_logger
 
 
 logger = get_app_logger()

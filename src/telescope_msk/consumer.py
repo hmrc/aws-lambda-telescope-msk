@@ -1,7 +1,7 @@
 import confluent_kafka
 from confluent_kafka import Consumer, TopicPartition
 from confluent_kafka.admin import TopicMetadata
-from src.telescope_msk.logger import get_app_logger
+from telescope_msk.logger import get_app_logger
 
 # autodetect the environment: local vs AWS
 #   if local: tunnel + bootstrap_servers = 'localhost:9092'
