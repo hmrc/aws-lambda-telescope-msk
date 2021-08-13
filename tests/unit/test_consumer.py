@@ -49,9 +49,7 @@ class GetMetricsForGroupAndTopic(TestCase):
         with patch("telescope_msk.consumer.get_consumer") as mock_get_consumer:
             mock_consumer = MagicMock()
             mock_get_consumer.return_value = mock_consumer
-            with patch(
-                "telescope_msk.consumer.get_metrics_for_topic"
-            ) as get_metrics:
+            with patch("telescope_msk.consumer.get_metrics_for_topic") as get_metrics:
                 get_metrics.return_value = [{"metrics": "foo"}]
                 out = get_metrics_for_group_and_topic(
                     "bootstrap_servers", "group", "topic"
@@ -96,9 +94,7 @@ class GetPartitionsForTopic(TestCase):
 
 class GetPartitionsForTopics(TestCase):
     def test_calls_through_for_each_topic(self):
-        with patch(
-            "telescope_msk.consumer.get_partitions_for_topic"
-        ) as get_partitions:
+        with patch("telescope_msk.consumer.get_partitions_for_topic") as get_partitions:
             get_partitions.return_value = []
             mock_topics = {
                 "test_topic_1": Mock(
@@ -117,9 +113,7 @@ class GetPartitionsForTopics(TestCase):
 class GetMetricsForPartitions(TestCase):
     def test_calls_through_for_each_partition(self):
         consumer = MagicMock()
-        with patch(
-            "telescope_msk.consumer.get_metrics_for_partition"
-        ) as get_metrics:
+        with patch("telescope_msk.consumer.get_metrics_for_partition") as get_metrics:
             get_metrics.return_value = {"offset": 10}
 
             out = get_metrics_for_partitions(consumer, [Mock(), Mock()])
