@@ -2,7 +2,7 @@ version: 0.2
 env:
   variables:
     MDTP_ENVIRONMENT: "internal-base"
-    SAM_USE_CONTAINER: ""
+    SAM_USE_CONTAINER: "--use-container"
 phases:
   install:
     runtime-versions:
