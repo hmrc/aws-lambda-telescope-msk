@@ -3,10 +3,10 @@ import os
 import logging
 import json
 
-from telemetry.telescope_msk.broker import ping_brokers
-from telemetry.telescope_msk.consumer import get_metrics_for_groups_and_topics
-from telemetry.telescope_msk.logger import create_app_logger, get_app_logger
-from telemetry.telescope_msk.publisher import publish_metrics, publish_metric_sums
+from telescope_msk.broker import ping_brokers
+from telescope_msk.consumer import get_metrics_for_groups_and_topics
+from telescope_msk.logger import create_app_logger, get_app_logger
+from telescope_msk.publisher import publish_metrics, publish_metric_sums
 
 create_app_logger(logging.DEBUG)
 
@@ -24,13 +24,15 @@ def get_consumer_groups_topic_names():
         env_var = os.environ.get("consumer_group_topic_map", "{}")
         output = json.loads(env_var)
         if type(output) != dict:
-            raise Exception('consumer_group_topic_map is not type dict')
+            raise Exception("consumer_group_topic_map is not type dict")
     except Exception as e:
-        get_app_logger().error(f'Unable to get consumer_group to topic name map from env var "consumer_group_topic_map with error: {e}"')
+        get_app_logger().error(
+            f'Unable to get consumer_group to topic name map from env var "consumer_group_topic_map with error: {e}"'
+        )
 
     return output
 
-   
+
 def lambda_handler(event, context):
     msk_logger = get_app_logger()
     try:
@@ -48,18 +50,12 @@ def lambda_handler(event, context):
     msk_logger.debug(consumer_groups_topic_names)
 
     try:
-        metrics = get_metrics_for_groups_and_topics(bootstrap_servers, consumer_groups_topic_names)
+        metrics = get_metrics_for_groups_and_topics(
+            bootstrap_servers, consumer_groups_topic_names
+        )
         msk_logger.debug(metrics)
         publish_metrics(metrics, graphite_host)
         publish_metric_sums(metrics, graphite_host)
 
-        return {
-            'success': True
-        }
     except Exception as e:
-        msk_logger.error(f"publish msk offsets failed: {e}")
-
-        return {
-            'success': False,
-            'errorMessage': str(e)
-        }
+        msk_logger.error(f"Publish msk offsets failed: {e}")

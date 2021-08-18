@@ -1,18 +1,37 @@
-FROM python:3.6.9
+ARG PYTHON_VERSION=3.8
+FROM python:${PYTHON_VERSION}
 
+ARG APP_USER=jenkins
+ARG APP_USER_ID=1000
+ARG APP_GROUP_ID=1000
+ARG PROJECT_ROOT=/src/
+ARG POETRY_VERSION=1.1.6
+
+# setup
 RUN apt-get update && apt-get install -y \
-    netcat \
-    && rm -rf /var/lib/apt/lists/*
+	build-essential \
+	libssl-dev \
+	libffi-dev \
+	make \
+	bash \
+	zip \
+	openssl \
+	git
 
-COPY . /app
+# create app dir and user
+RUN mkdir -p ${PROJECT_ROOT} && \
+    addgroup --gid ${APP_GROUP_ID} ${APP_USER} && \
+    adduser --system --uid ${APP_USER_ID} ${APP_USER} --gid ${APP_GROUP_ID} --disabled-password
 
-WORKDIR /app
+# set local directory
+WORKDIR ${PROJECT_ROOT}
 
-RUN pip install --upgrade pip
-RUN pip install poetry
-RUN poetry config virtualenvs.create false
-RUN rm -rf /root/.cache/pypoetry/artifacts
-RUN poetry install -vvv
-RUN poetry export -f requirements.txt > requirements.txt
+# upgrade pip and install poetry
+RUN pip install --upgrade pip && \
+    pip install poetry==${POETRY_VERSION}
 
-CMD ["poetry", "run", "pytest", "--cov=telemetry"]
+# change permissions on our src and home directories so that our user has access
+RUN chown -R ${APP_USER}:${APP_USER} ${PROJECT_ROOT} && chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}
+
+# change to our non root user for security purposes
+USER ${APP_USER}

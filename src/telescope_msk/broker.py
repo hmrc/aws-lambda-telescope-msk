@@ -1,4 +1,4 @@
-from telemetry.telescope_msk.logger import get_app_logger
+from telescope_msk.logger import get_app_logger
 import socket
 from contextlib import closing
 
@@ -13,10 +13,10 @@ def ping_broker(hostname: str):
     url, port = hostname.split(":")
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.settimeout(5)
-        logger.debug(f'pinging: {hostname}')
+        logger.debug(f"pinging: {hostname}")
         try:
             s.connect((url, int(port)))
         except Exception as e:
-            logger.error(f'Error connecting to broker at: {hostname}: {e}')
+            logger.error(f"Error connecting to broker at: {hostname}: {e}")
         finally:
             s.close()
