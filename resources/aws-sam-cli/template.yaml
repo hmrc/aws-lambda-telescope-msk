@@ -8,4 +8,4 @@ Resources:
       FunctionName: telescope-msk
       Handler: handler.lambda_handler
       Role: TelescopeMSKRole
-      Runtime: python3.8
+      Runtime: python3.9

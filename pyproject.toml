@@ -15,7 +15,7 @@ aws-lambda-powertools = "^1.21.1"
 boto3 = "^1.17.85"
 confluent-kafka = "^1.7.0"
 graphyte = "^1.6.0"
-python = "^3.8"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
 aws-lambda-context = "^1.1.0"
