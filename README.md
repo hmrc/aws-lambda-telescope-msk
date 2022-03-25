@@ -1,4 +1,4 @@
-# Telescope MSK
+# aws-lambda-telescope-msk
 
 [![Brought to you by Telemetry Team](https://img.shields.io/badge/MDTP-Telemetry-40D9C0?style=flat&labelColor=000000&logo=gov.uk)](https://confluence.tools.tax.service.gov.uk/display/TEL/Telemetry)
 
@@ -6,7 +6,7 @@ Telescope library for interacting with an MSK/Kafka cluster.
 
 ## Requirements
 
-* [Python 3.8+](https://www.python.org/downloads/release)
+* [Python 3.9+](https://www.python.org/downloads/release)
 * [Poetry](https://python-poetry.org/)
 * [librdkafka](https://github.com/edenhill/librdkafka)
 
@@ -15,7 +15,7 @@ Telescope library for interacting with an MSK/Kafka cluster.
 Install dependencies using Poetry:
 
 ```sh
-poetry install
+make setup
 ```
 
 All available interactions with the MSK cluster are packaged as individual Python scripts in `bin/`.
@@ -23,8 +23,7 @@ Run each script as `poetry run bin/<script.py>` prefixed with the desired AWS pr
 Example:
 
 ```sh
-aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer \
-  poetry run bin/consumer-groups.py --help
+aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer poetry run bin/consumer-groups.py --help
 ```
 
 ## Local development
