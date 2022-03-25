@@ -32,6 +32,8 @@ rich = "^9.6.1"
 safety = "^1.10.3"
 taskipy = "^1.4.0"
 version-incrementor = "^1.5.0"
+itsdangerous = "=2.0.1"
+jinja2 = "=2.11.3"
 
 [tool.taskipy.tasks]
 assemble = "./bin/lambda-tools.sh assemble"
