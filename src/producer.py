@@ -55,9 +55,9 @@ def lambda_handler(event, context):
     data = get_data_from_event(event)
 
     # Calculate elapsed time
-    start_time = datetime.datetime.now()
+    start_time = datetime.now()
     send_msg_async(kafka_topic, data)
-    end_time = datetime.datetime.now()
+    end_time = datetime.now()
 
     # Display elapsed time
     time_delta = end_time - start_time
