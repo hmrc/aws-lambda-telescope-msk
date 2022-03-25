@@ -26,6 +26,21 @@ Example:
 aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer poetry run bin/consumer-groups.py --help
 ```
 
+## Simple Producer Test Lambda
+The python script `producer.py` is used as a lambda function's handler entrypoint. This lambda can be used to test
+generating messages as a Kafka producer. All it requires is a lambda test payload that defines the target topic and the
+data to be posted to the topic. For example:
+
+```json
+{
+  "topic": "logs",
+  "data": {
+    "data0": "hello",
+    "data1": "world"
+  }
+}
+```
+
 ## Local development
 
 To run locally the plaintext bootstrap cluster host names must be added to local host IP address:
