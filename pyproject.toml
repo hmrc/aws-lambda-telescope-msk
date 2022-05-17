@@ -3,8 +3,9 @@ name = "telescope-msk"
 version = "0.1.0"
 description = "Telescope library for interacting with an MSK/Kafka cluster"
 readme = "README.md"
-authors = ["Vítor Brandão <109226+vitorbrandao@users.noreply.github.com>"]
+authors = ["Team Telemetry <telemetry@digital.hmrc.gov.uk>"]
 maintainers = ["Team Telemetry"]
+license = "Apache 2.0"
 
 [[tool.poetry.source]]
 name = "artifactory"
@@ -13,7 +14,7 @@ url = "https://artefacts.tax.service.gov.uk/artifactory/api/pypi/pips/simple/"
 [tool.poetry.dependencies]
 aws-lambda-powertools = "^1.21.1"
 boto3 = "^1.17.85"
-confluent-kafka = "^1.7.0"
+confluent-kafka = "^1.8.2"
 graphyte = "^1.6.0"
 python = "^3.9"
 
@@ -49,7 +50,8 @@ publish = "./bin/lambda-tools.sh publish"
 publish_checksum_file = "./bin/lambda-tools.sh publish_checksum_file"
 publish_s3 = "./bin/lambda-tools.sh publish_artifacts_to_s3"
 rename_s3_file = "./bin/lambda-tools.sh rename_artifacts_in_s3"
-safety = "safety check"
+# Reason for safely skipping check: https://github.com/aws/aws-sam-cli/issues/3691#issuecomment-1099503361
+safety = "safety check --ignore=47833"
 start_lambda = "./bin/start-lambda.sh"
 stop_lambda = "./bin/stop-lambda.sh"
 test = "task unittest"

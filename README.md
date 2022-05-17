@@ -14,7 +14,7 @@ Telescope library for interacting with an MSK/Kafka cluster.
 
 Install dependencies using Poetry:
 
-```sh
+```shell
 make setup
 ```
 
@@ -22,7 +22,7 @@ All available interactions with the MSK cluster are packaged as individual Pytho
 Run each script as `poetry run bin/<script.py>` prefixed with the desired AWS profile.
 Example:
 
-```sh
+```shell
 aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer poetry run bin/consumer-groups.py --help
 ```
 
@@ -70,6 +70,23 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 ./poetry/bin/poetry install
 export AWS_DEFAULT_REGION=eu-west-2
 python3 .poetry/bin/poetry run python3 bin/consumer-groups.py
+```
+
+## Poetry Install on Mac M1 chips
+
+These instructions are taken from [this source](https://segmentfault.com/a/1190000040867082/en)
+
+* Install librdkafka using Brew
+* Set environment variables to point at install location
+* Run poetry install/update as appropriate
+
+```shell
+brew install librdkafka
+# Get the version number installed
+ls -la /opt/homebrew/Cellar/librdkafka
+# Export the file paths
+export C_INCLUDE_PATH=/opt/homebrew/Cellar/librdkafka/1.8.2/include
+export LIBRARY_PATH=/opt/homebrew/Cellar/librdkafka/1.8.2/lib
 ```
 
 ## License
