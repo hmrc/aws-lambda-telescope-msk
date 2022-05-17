@@ -7,7 +7,7 @@ repos:
         language: script
         pass_filenames: false
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
       - id: no-commit-to-branch
       - id: check-case-conflict
@@ -20,7 +20,7 @@ repos:
       - id: end-of-file-fixer
         exclude: repository.yaml
   - repo: https://github.com/python/black
-    rev: 22.1.0
+    rev: 22.3.0
     hooks:
       - id: black
         name: Run Black
