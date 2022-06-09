@@ -19,6 +19,7 @@ def get_consumer(bootstrap_servers: str, group_id: str) -> Consumer:
         {
             "bootstrap.servers": bootstrap_servers,
             "group.id": group_id,
+            "security.protocol": "SSL",
         }
     )
 
