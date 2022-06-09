@@ -35,11 +35,12 @@ def get_data_from_event(event):
 
 producer = Producer(
     {
-        "bootstrap.servers": get_env_bootstrap_servers(),
-        "socket.timeout.ms": 100,
         "api.version.request": "false",
+        "bootstrap.servers": get_env_bootstrap_servers(),
         "broker.version.fallback": "0.9.0",
         "message.max.bytes": 1000000000,
+        "security.protocol": "SSL",
+        "socket.timeout.ms": 100,
     }
 )
 
