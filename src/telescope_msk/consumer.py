@@ -1,5 +1,6 @@
 import confluent_kafka
-from confluent_kafka import Consumer, TopicPartition
+from confluent_kafka import Consumer
+from confluent_kafka import TopicPartition
 from confluent_kafka.admin import TopicMetadata
 from telescope_msk.logger import get_app_logger
 

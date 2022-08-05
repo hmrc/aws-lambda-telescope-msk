@@ -1,37 +1,14 @@
-ARG PYTHON_VERSION=3.9
-FROM python:${PYTHON_VERSION}
+FROM public.ecr.aws/lambda/python:3.9
 
-ARG APP_USER=jenkins
-ARG APP_USER_ID=1000
-ARG APP_GROUP_ID=1000
-ARG PROJECT_ROOT=/src/
-ARG POETRY_VERSION=1.1.13
+RUN yum install ca-certificates -y
 
-# setup
-RUN apt-get update && apt-get install -y \
-	build-essential \
-	libssl-dev \
-	libffi-dev \
-	make \
-	bash \
-	zip \
-	openssl \
-	git
+COPY requirements.txt requirements-tests.txt setup.cfg ${LAMBDA_TASK_ROOT}/
 
-# create app dir and user
-RUN mkdir -p ${PROJECT_ROOT} && \
-    addgroup --gid ${APP_GROUP_ID} ${APP_USER} && \
-    adduser --system --uid ${APP_USER_ID} ${APP_USER} --gid ${APP_GROUP_ID} --disabled-password
+RUN python -m venv venv && \
+  source ./venv/bin/activate && \
+  pip install --upgrade pip && \
+  pip install --requirement requirements-tests.txt --target "${LAMBDA_TASK_ROOT}"
 
-# set local directory
-WORKDIR ${PROJECT_ROOT}
+COPY src/handler.py tests ${LAMBDA_TASK_ROOT}/
 
-# upgrade pip and install poetry
-RUN pip install --upgrade pip && \
-    pip install poetry==${POETRY_VERSION}
-
-# change permissions on our src and home directories so that our user has access
-RUN chown -R ${APP_USER}:${APP_USER} ${PROJECT_ROOT} && chown -R ${APP_USER}:${APP_USER} /home/${APP_USER}
-
-# change to our non root user for security purposes
-USER ${APP_USER}
+CMD [ "handler.lambda_handler" ]

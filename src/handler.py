@@ -1,12 +1,13 @@
-import ast
-import os
-import logging
 import json
+import logging
+import os
 
 from telescope_msk.broker import ping_brokers
 from telescope_msk.consumer import get_metrics_for_groups_and_topics
-from telescope_msk.logger import create_app_logger, get_app_logger
-from telescope_msk.publisher import publish_metrics, publish_metric_sums
+from telescope_msk.logger import create_app_logger
+from telescope_msk.logger import get_app_logger
+from telescope_msk.publisher import publish_metric_sums
+from telescope_msk.publisher import publish_metrics
 
 create_app_logger(logging.DEBUG)
 
@@ -38,7 +39,7 @@ def lambda_handler(event, context):
     try:
         msk_logger.info(f"Lambda Request ID: {context.aws_request_id}")
     except AttributeError:
-        msk_logger.debug(f"No context object available")
+        msk_logger.debug("No context object available")
 
     graphite_host = get_graphite_host()
     bootstrap_servers = get_env_bootstrap_servers()

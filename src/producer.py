@@ -1,8 +1,9 @@
 import json
 import os
 from datetime import datetime
-from confluent_kafka import Producer
+
 from aws_lambda_powertools import Logger
+from confluent_kafka import Producer
 
 logger = Logger(service="telescope-msk-producer")
 

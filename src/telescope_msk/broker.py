@@ -1,6 +1,7 @@
-from telescope_msk.logger import get_app_logger
 import socket
 from contextlib import closing
+
+from telescope_msk.logger import get_app_logger
 
 
 def ping_brokers(hostnames: str):
