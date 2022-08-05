@@ -1,5 +1,7 @@
 from unittest.mock import patch
-from telescope_msk.publisher import publish_metrics, publish_metric_sums
+
+from telescope_msk.publisher import publish_metric_sums
+from telescope_msk.publisher import publish_metrics
 
 
 @patch("telescope_msk.publisher.publish_kafka_to_graphite")

@@ -1,5 +1,4 @@
 import graphyte
-
 from telescope_msk.app_info import METRICS_PREFIX
 from telescope_msk.logger import get_app_logger
 

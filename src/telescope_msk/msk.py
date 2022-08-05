@@ -1,11 +1,11 @@
 # Useful developer docs:
 #  https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kafka.html#Kafka.Client.list_clusters
+from typing import List
 
 import boto3
-from telescope_msk.logger import get_app_logger
-from telescope_msk.cli import get_console
-from typing import List
 from botocore.config import Config
+from telescope_msk.cli import get_console
+from telescope_msk.logger import get_app_logger
 
 my_config = Config(region_name="eu-west-2", connect_timeout=10, read_timeout=10)
 

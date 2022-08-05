@@ -1,17 +1,18 @@
-from unittest.mock import MagicMock, Mock, patch
-from unittest import mock, TestCase
+from unittest import mock
+from unittest import TestCase
+from unittest.mock import MagicMock
+from unittest.mock import Mock
+from unittest.mock import patch
 
-from telescope_msk.consumer import (
-    get_consumer,
-    get_metrics_for_group_and_topic,
-    get_metrics_for_topic,
-    get_metrics_for_partition,
-    get_metrics_for_partitions,
-    get_partitions_for_topic,
-    get_partitions_for_topics,
-    get_metrics_for_groups_and_topics,
-)
 from confluent_kafka import Consumer
+from telescope_msk.consumer import get_consumer
+from telescope_msk.consumer import get_metrics_for_group_and_topic
+from telescope_msk.consumer import get_metrics_for_groups_and_topics
+from telescope_msk.consumer import get_metrics_for_partition
+from telescope_msk.consumer import get_metrics_for_partitions
+from telescope_msk.consumer import get_metrics_for_topic
+from telescope_msk.consumer import get_partitions_for_topic
+from telescope_msk.consumer import get_partitions_for_topics
 from telescope_msk.logger import get_app_logger
 
 
