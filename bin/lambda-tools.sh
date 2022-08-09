@@ -60,7 +60,7 @@ unittest() {
   print_completed
 }
 
-# Prepare dependencies and build the Lambda function code using SAM
+# Prepare dependencies and build the Lambda function code using Docker
 assemble() {
   print_begins
 
@@ -109,7 +109,7 @@ publish() {
   print_completed
 }
 
-# Package and upload artifacts to S3
+# Upload artifacts to S3
 publish_artifacts_to_s3() {
   print_begins
 
@@ -157,7 +157,7 @@ help() {
   echo -e " - assemble\t\t\t Prepare dependencies and build the Lambda function code using Docker"
   echo -e " - prepare_release\t\t Bump the function's version when appropriate"
   echo -e " - publish\t\t\t Package and share artifacts by running assemble, publish_artifacts_to_s3 and publish_checksum_file commands"
-  echo -e " - publish_artifacts_to_s3\t Uses SAM to Package and upload artifacts to ${S3_ADDRESS}"
+  echo -e " - publish_artifacts_to_s3\t Upload artifacts to ${S3_ADDRESS}"
   echo -e " - publish_checksum_file\t Generate a checksum for the artifacts zip file and store in the same S3 location (${S3_LAMBDA_SUB_FOLDER})"
   echo -e " - cut_release\t\t Creates a release tag in the repository"
   echo

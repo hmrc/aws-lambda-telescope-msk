@@ -54,7 +54,7 @@ check_python: ## Check Python installation
 .PHONY: check_python
 
 clean: ## Teardown build artefacts
-	@rm -rf ./build ./venv ./venv_assemble
+	@sudo rm -rf ./build ./venv ./venv_assemble
 .PHONY: clean
 
 cut_release: ## Cut release
