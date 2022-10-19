@@ -7,9 +7,11 @@ PYTHON_OK := $(shell type -P python)
 PYTHON_REQUIRED := $(shell cat .python-version)
 PYTHON_VERSION ?= $(shell python -V | cut -d' ' -f2)
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+CURRENT_DIR := $(notdir $(patsubst %/,%,$(dir $(MAKEFILE_PATH))))
 
 BUCKET_NAME := telemetry-internal-base-lambda-artifacts
-LAMBDA_NAME := aws-lambda-telescope_msk
+LAMBDA_NAME := $(CURRENT_DIR)
 TELEMETRY_INTERNAL_BASE_ACCOUNT_ID := 634456480543
 
 help: ## The help text you're reading
