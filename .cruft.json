@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/hmrc/telemetry-lambda-resources",
-  "commit": "db8413a528cd35c8c8805b3cc6a3afa4239918d7",
+  "commit": "03088b1497f2e5527bbb52a31d758419130f0cd5",
   "context": {
     "cookiecutter": {
       "bandit_skip_tests": "",
@@ -9,8 +9,10 @@
       "lambda_handler": "handler.lambda_handler",
       "lambda_name": "aws-lambda-telescope-msk",
       "lambda_name_formatted": "aws-lambda-telescope-msk",
+      "unit_test_style": "pytest",
       "_template": "https://github.com/hmrc/telemetry-lambda-resources"
     }
   },
-  "directory": null
+  "directory": null,
+  "checkout": null
 }

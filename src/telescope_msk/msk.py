@@ -121,7 +121,7 @@ def get_plaintext_bootstrap_servers():
 
 def print_summary():
     console = get_console()
-    with console.status("[bold green]Fetching cluster info...") as status:
+    with console.status("[bold green]Fetching cluster info..."):
         cluster_arn = get_cluster_arn(DEFAULT_CLUSTER_NAME)
         msk_cluster = get_cluster_info(cluster_arn)
         bootstrap_servers = get_bootstrap_servers(cluster_arn)
@@ -129,13 +129,13 @@ def print_summary():
     console.print(f"[b u]{DEFAULT_CLUSTER_NAME}[/b u]")
 
     # Cluster Summary
-    console.print(f"\n[cyan]Cluster summary[/cyan]\n")
+    console.print("\n[cyan]Cluster summary[/cyan]\n")
     console.print(f"  Status: [yellow]{msk_cluster.status}[/yellow]")
     console.print(f"  Kafka version: [yellow]{msk_cluster.kafka_version}[/yellow]")
     console.print(f"  Creation Time: [yellow]{msk_cluster.creation_time}[/yellow]")
     console.print(f"  ARN: [yellow]{msk_cluster.arn}[/yellow]")
 
     # Client Information
-    console.print(f"\n[cyan]Bootstrap servers[/cyan]\n")
+    console.print("\n[cyan]Bootstrap servers[/cyan]\n")
     console.print(f"  TLS: [yellow]{bootstrap_servers.tls_str}[/yellow]")
     console.print(f"  Plaintext: [yellow]{bootstrap_servers.plaintext_str}[/yellow]")

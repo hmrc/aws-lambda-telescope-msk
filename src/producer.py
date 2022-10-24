@@ -18,7 +18,7 @@ def get_topic_from_event(event):
     try:
         kafka_topic = event["topic"]
     except KeyError:
-        logger.debug(f"No topic in event, defaulting to kafka_topic=logs")
+        logger.debug("No topic in event, defaulting to kafka_topic=logs")
 
     return kafka_topic
 
@@ -29,7 +29,7 @@ def get_data_from_event(event):
     try:
         data = event["data"]
     except KeyError:
-        logger.debug(f"No data in event, defaulting to noddy hello world object")
+        logger.debug("No data in event, defaulting to noddy hello world object")
 
     return data
 
@@ -50,7 +50,7 @@ def lambda_handler(event, context):
     try:
         logger.info(f"Lambda Request ID: {context.aws_request_id}")
     except AttributeError:
-        logger.debug(f"No context object available")
+        logger.debug("No context object available")
 
     # Get details from the event object
     kafka_topic = get_topic_from_event(event)
