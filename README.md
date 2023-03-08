@@ -23,7 +23,7 @@ Run each script as `poetry run bin/<script.py>` prefixed with the desired AWS pr
 Example:
 
 ```shell
-aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer poetry run bin/consumer-groups.py --help
+aws-profile -p telemetry-mdtp-staging-RoleTelemetryAdministrator poetry run bin/consumer-groups.py --help
 ```
 
 ## Simple Producer Test Lambda
@@ -55,7 +55,7 @@ ssh -L 9092:localhost:9092 10.3.0.191
 ```
 Once a port is open you can run the standard scripts as above:
 ```sh
-aws-profile -p telemetry-mdtp-staging-RoleTelemetryEngineer \
+aws-profile -p telemetry-mdtp-staging-RoleTelemetryAdministrator \
   poetry run bin/consumer-groups.py --help
 ```
 
