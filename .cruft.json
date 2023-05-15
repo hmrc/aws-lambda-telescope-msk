@@ -3,7 +3,7 @@
   "commit": "97a8b1b6716443a82e08f22b54a8b789a7305996",
   "context": {
     "cookiecutter": {
-      "bandit_skip_tests": "",
+      "bandit_skip_tests": "'E203'",
       "custom_makefile_name": "",
       "flake8_extra_skip_tests": "",
       "lambda_artifacts_bucket": "telemetry-internal-base-lambda-artifacts",
