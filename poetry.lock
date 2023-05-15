@@ -483,19 +483,6 @@ url = "https://artefacts.tax.service.gov.uk/artifactory/api/pypi/pips/simple"
 reference = "artifactory"
 
 [[package]]
-name = "graphyte"
-version = "1.7.1"
-description = "Python 3 compatible library to send data to a Graphite metrics server (Carbon)"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.source]
-type = "legacy"
-url = "https://artefacts.tax.service.gov.uk/artifactory/api/pypi/pips/simple"
-reference = "artifactory"
-
-[[package]]
 name = "identify"
 version = "2.5.24"
 description = "File identification library for Python"
@@ -1296,7 +1283,7 @@ reference = "artifactory"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "1e33bbec247ec8c9b1b394b1b7115844c6643cb40d7f682b56be9790d609978e"
+content-hash = "3a079c26a9b218138fbb6449128055c53306c152c95a2a6344d2ee29f2ee3237"
 
 [metadata.files]
 arrow = [
@@ -1639,9 +1626,6 @@ gitdb2 = [
 gitpython = [
     {file = "GitPython-3.1.30-py3-none-any.whl", hash = "sha256:cd455b0000615c60e286208ba540271af9fe531fa6a87cc590a7298785ab2882"},
     {file = "GitPython-3.1.30.tar.gz", hash = "sha256:769c2d83e13f5d938b7688479da374c4e3d49f71549aaf462b646db9602ea6f8"},
-]
-graphyte = [
-    {file = "graphyte-1.7.1.tar.gz", hash = "sha256:5c6061f32375ea9de8cccd78b259c928670fbabcf6fd4ddbf160e77124289be2"},
 ]
 identify = [
     {file = "identify-2.5.24-py2.py3-none-any.whl", hash = "sha256:986dbfb38b1140e763e413e6feb44cd731faf72d1909543178aa79b0e258265d"},
