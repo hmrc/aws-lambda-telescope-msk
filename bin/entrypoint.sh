@@ -43,7 +43,3 @@ pip install --index-url https://artefacts.tax.service.gov.uk/artifactory/api/pyp
 export PATH="$PATH:./${VENV_NAME}/lib/python3.14/site-packages/bin"
 
 exec "$@"
-
-
-#            --platform manylinux2014_x86_64 \
-#            --platform manylinux_2_28_x86_64 \
