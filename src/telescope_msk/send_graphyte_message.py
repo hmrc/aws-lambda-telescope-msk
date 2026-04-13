@@ -3,7 +3,6 @@ from telescope_msk.graphyte import init
 from telescope_msk.graphyte import send
 from telescope_msk.logger import get_app_logger
 
-
 logger = get_app_logger()
 
 
