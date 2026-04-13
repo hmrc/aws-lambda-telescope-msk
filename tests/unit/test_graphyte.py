@@ -1,4 +1,3 @@
-"""Unit tests for the graphyte module."""
 import re
 import socketserver
 import time

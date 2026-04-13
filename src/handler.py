@@ -24,7 +24,7 @@ def get_consumer_groups_topic_names():
     try:
         env_var = os.environ.get("consumer_group_topic_map", "{}")
         output = json.loads(env_var)
-        if type(output) != dict:
+        if not isinstance(output, dict):
             raise Exception("consumer_group_topic_map is not type dict")
     except Exception as e:
         get_app_logger().error(

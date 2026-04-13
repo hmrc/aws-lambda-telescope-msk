@@ -92,7 +92,7 @@ def get_metrics_for_partition(consumer: Consumer, partition: TopicPartition) -> 
             f"Getting watermarks for partition:{partition.partition} on topic: {partition.topic} has taken longer than timeout {timeout} seconds"
         )
 
-    (low, high) = watermarks
+    low, high = watermarks
     # possible negative values for partition offset or high are defined by the following consts
     # confluent_kafka.OFFSET_BEGINNING == -2
     # confluent_kafka.OFFSET_END == -1

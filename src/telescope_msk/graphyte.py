@@ -1,14 +1,10 @@
 # This was taken from version 1.7.1 of the graphyte project
 # The project does not have a manylinux binary build available so the team decided to bring the code local
-"""Send data to Graphite metrics server (synchronously or on a background thread).
-
-For example usage, see README.rst.
-
-This code is licensed under a permissive MIT license -- see LICENSE.txt.
-
-The graphyte project lives on GitHub here:
-https://github.com/benhoyt/graphyte
-"""
+# Send data to Graphite metrics server (synchronously or on a background thread).
+# For example usage, see README.rst.
+# This code is licensed under a permissive MIT license -- see LICENSE.txt.
+# The graphyte project lives on GitHub here:
+# https://github.com/benhoyt/graphyte
 import atexit
 import logging
 import queue
