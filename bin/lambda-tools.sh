@@ -44,7 +44,7 @@ open_shell() {
                --workdir /data \
                --env REQUIREMENTS_FILE="requirements-tests.txt" \
                --env VENV_NAME="venv" \
-               ${DOCKER_REPOSITORY}/python:$(cat "${BASE_LOCATION}/.python-version")-slim-trixie /data/bin/entrypoint.sh /bin/bash
+               ${DOCKER_REPOSITORY}/python:3.10-slim-bookworm /data/bin/entrypoint.sh /bin/bash
 
     print_completed
 }
@@ -60,7 +60,7 @@ unittest() {
              --workdir /data \
              --env REQUIREMENTS_FILE="requirements-tests.txt" \
              --env VENV_NAME="venv" \
-             ${DOCKER_REPOSITORY}/python:$(cat "${BASE_LOCATION}/.python-version")-slim-trixie /data/bin/entrypoint.sh /data/bin/run-tests.sh
+             ${DOCKER_REPOSITORY}/python:3.10-slim-bookworm /data/bin/entrypoint.sh /data/bin/run-tests.sh
 
   print_completed
 }
@@ -78,7 +78,7 @@ package() {
              --env LAMBDA_HASH_NAME="${LAMBDA_HASH_NAME}" \
              --env REQUIREMENTS_FILE="requirements.txt" \
              --env VENV_NAME="venv_package" \
-             ${DOCKER_REPOSITORY}/python:$(cat "${BASE_LOCATION}/.python-version")-slim-trixie /data/bin/entrypoint.sh /data/bin/package-lambda.sh
+             ${DOCKER_REPOSITORY}/python:3.10-slim-bookworm /data/bin/entrypoint.sh /data/bin/package-lambda.sh
 
   print_completed
 }
