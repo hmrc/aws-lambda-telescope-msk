@@ -6,7 +6,7 @@ Telescope library for interacting with an MSK/Kafka cluster. This lambda is resp
 
 ## Requirements
 
-* [Python 3.14+](https://www.python.org/downloads/release)
+* [Python 3.10+](https://www.python.org/downloads/release)
 * [Poetry](https://python-poetry.org/)
 * [librdkafka](https://github.com/edenhill/librdkafka)
 
