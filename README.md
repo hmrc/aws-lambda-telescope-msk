@@ -19,11 +19,11 @@ make setup
 ```
 
 All available interactions with the MSK cluster are packaged as individual Python scripts in `bin/`.
-Run each script as `poetry run bin/<script.py>` prefixed with the desired AWS profile.
+Run each script as `poetry run bin/<script.py>` setup with the desired AWS profile.
 Example:
 
 ```shell
-aws-profile -p telemetry-mdtp-staging-RoleTelemetryAdministrator poetry run bin/consumer-groups.py --help
+poetry run bin/consumer-groups.py --help
 ```
 
 ## Simple Producer Test Lambda
@@ -55,8 +55,7 @@ ssh -L 9092:localhost:9092 10.3.0.191
 ```
 Once a port is open you can run the standard scripts as above:
 ```sh
-aws-profile -p telemetry-mdtp-staging-RoleTelemetryAdministrator \
-  poetry run bin/consumer-groups.py --help
+poetry run bin/consumer-groups.py --help
 ```
 
 ### Sync and run in ECS
