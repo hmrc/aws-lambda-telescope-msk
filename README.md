@@ -9,6 +9,12 @@ and passing them to Clickhouse. An example usage of the metrics can be seen on t
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [Prerequisites](#prerequisites)
+- [Quick start](#quick-start)
+- [Simple Producer Test Lambda](#simple-producer-test-lambda)
+- [Local development](#local-development)
+- [Package Install on Mac M1 chips](#package-install-on-mac-m1-chips)
+- [License](#license)
 
 <!-- END doctoc -->
 
