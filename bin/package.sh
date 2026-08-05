@@ -1,18 +1,11 @@
-#!/bin/bash
-
-### WARNING! This is a generated file and should ONLY be edited in https://github.com/hmrc/telemetry-lambda-resources
+#!/usr/bin/env bash
 
 set -eu
 
-apt install -y libssl-dev zip
 mkdir -p build
-# Package the dependencies
-cd "./${VENV_NAME}/lib/python3.10/site-packages"
-zip -r "../../../../build/${LAMBDA_ZIP_NAME}" .
+cd "./${VENV_NAME}/lib/python${PYTHON_VERSION_LIB}/site-packages"
+zip -r "../../../../build/lambda.zip" .
 cd -
-# Package the source
 cd "./src"
-zip -r --grow "../build/${LAMBDA_ZIP_NAME}" .
-# Generate the hash file
-openssl dgst -sha256 -binary "../build/${LAMBDA_ZIP_NAME}" | openssl enc -base64 >"../build/${LAMBDA_HASH_NAME}"
+zip -r --grow "../build/lambda.zip" .
 cd -
