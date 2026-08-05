@@ -6,16 +6,16 @@ authors = [{ name = "Team Telemetry", email = "telemetry@digital.hmrc.gov.uk" }]
 license = "Apache 2.0"
 maintainers = [{ name = "Team Telemetry", email = "telemetry@digital.hmrc.gov.uk" }]
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.14,<3.15"
 
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
 ]
 
 dependencies = [
     "aws-lambda-powertools",
-    "confluent-kafka",
+    "confluent-kafka[oauthbearer-aws]",
     "cryptography",
     "urllib3>=2.7.0",
 ]
@@ -39,6 +39,11 @@ source = ["./src"]
 
 [tool.coverage.report]
 fail_under = 45
+
+[[tool.uv.index]]
+name = "artifactory"
+url = "https://artefacts.tax.service.gov.uk/artifactory/api/pypi/pips/simple"
+default = true
 
 [tool.pytest.ini_options]
 log_cli = true
@@ -65,11 +70,6 @@ select = ["E", "W"]
 [tool.uv]
 package = false
 default-groups = "all"
-
-[[tool.uv.index]]
-name = "artifactory"
-url = "https://artefacts.tax.service.gov.uk/artifactory/api/pypi/pips/simple"
-default = true
 
 [build-system]
 requires = ["uv_build>=0.12.1,<0.13.0"]
