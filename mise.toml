@@ -1,4 +1,0 @@
-[tools]
-poetry = "1.8.3"
-pre-commit = "4.5.1"
-python = "3.10.15"

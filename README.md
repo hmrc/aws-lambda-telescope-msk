@@ -2,28 +2,41 @@
 
 [![Brought to you by Telemetry Team](https://img.shields.io/badge/MDTP-Telemetry-40D9C0?style=flat&labelColor=000000&logo=gov.uk)](https://confluence.tools.tax.service.gov.uk/display/TEL/Telemetry)
 
-Telescope library for interacting with an MSK/Kafka cluster. This lambda is responsible for fetching metrics about MSK and passing them to Clickhouse. An example usage of the metrics can be seen on the Telescope MSK Grafana Dashboard.
+Telescope library for interacting with an MSK/Kafka cluster. This lambda is responsible for fetching metrics about MSK
+and passing them to Clickhouse. An example usage of the metrics can be seen on the Telescope MSK Grafana Dashboard.
 
-## Requirements
+## Table of Contents
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-* [Python 3.10+](https://www.python.org/downloads/release)
-* [Poetry](https://python-poetry.org/)
-* [librdkafka](https://github.com/edenhill/librdkafka)
+- [Prerequisites](#prerequisites)
+- [Quick start](#quick-start)
+- [Simple Producer Test Lambda](#simple-producer-test-lambda)
+- [Local development](#local-development)
+- [Package Install on Mac M1 chips](#package-install-on-mac-m1-chips)
+- [License](#license)
+
+<!-- END doctoc -->
+
+## Prerequisites
+
+* [mise](https://mise.jdx.dev/) to manage tool versions and integrates with `uv`.
+* [uv](https://docs.astral.sh/uv/) to manage Python virtual environments and dependencies.
 
 ## Quick start
 
-Install dependencies using Poetry:
+Install dependencies using uv:
 
 ```shell
-make setup
+mise run setup
 ```
 
 All available interactions with the MSK cluster are packaged as individual Python scripts in `bin/`.
-Run each script as `poetry run bin/<script.py>` setup with the desired AWS profile.
+Run each script as `uv run bin/<script.py>` setup with the desired AWS profile.
 Example:
 
 ```shell
-poetry run bin/consumer-groups.py --help
+uv run bin/consumer-groups.py --help
 ```
 
 ## Simple Producer Test Lambda
@@ -55,29 +68,16 @@ ssh -L 9092:localhost:9092 10.3.0.191
 ```
 Once a port is open you can run the standard scripts as above:
 ```sh
-poetry run bin/consumer-groups.py --help
+uv run bin/consumer-groups.py --help
 ```
 
-### Sync and run in ECS
-### ECS is currently unavailable as of TEL-2300, permissions to run telemetry ecs must be added to the labs security group if wanting to run
-
-
-```sh
-export ECS_INSTANCE_IP_ADDRESS=10.3.0.191
-ssh $ECS_INSTANCE_IP_ADDRESS
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-./poetry/bin/poetry install
-export AWS_DEFAULT_REGION=eu-west-2
-python3 .poetry/bin/poetry run python3 bin/consumer-groups.py
-```
-
-## Poetry Install on Mac M1 chips
+## Package Install on Mac M1 chips
 
 These instructions are taken from [this source](https://segmentfault.com/a/1190000040867082/en)
 
 * Install librdkafka using Brew
 * Set environment variables to point at install location
-* Run poetry install/update as appropriate
+* Run uv install/update as appropriate
 
 ```shell
 brew install librdkafka

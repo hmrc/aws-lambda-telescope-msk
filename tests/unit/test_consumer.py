@@ -177,7 +177,9 @@ class GetMetricsForPartition(TestCase):
         consumer = MagicMock()
         consumer.get_watermark_offsets.return_value = None
 
-        l = lambda _: get_metrics_for_partition(
-            consumer, Mock(offset=-1, partition=11, topic="test_topic")
-        )
-        self.assertRaises(Exception, l)
+        def gmp():
+            get_metrics_for_partition(
+                consumer, Mock(offset=-1, partition=11, topic="test_topic")
+            )
+
+        self.assertRaises(Exception, gmp)
