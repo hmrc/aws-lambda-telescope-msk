@@ -60,7 +60,7 @@ addopts = [
 line-length = 120
 
 [tool.ruff.lint]
-select = ["E", "W"]        # pycodestyle-equivalent checks
+select = ["E", "W"]
 
 [tool.uv]
 package = false

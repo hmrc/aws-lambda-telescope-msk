@@ -10,9 +10,9 @@ _.file = { path = ".env", redact = true }
 _.python.venv = { path = ".venv", create = true }
 
 [tools]
-python         = "3.14.6"
-pre-commit     = "latest"
-uv             = "latest"
+python     = "3.12.13"
+pre-commit = "latest"
+uv         = "latest"
 
 [settings]
 python.uv_venv_auto = "create|source"
