@@ -36,7 +36,43 @@ dev = [
     "version-incrementor>=1.10.0,<2",
 ]
 
+[tool.coverage.html]
+directory = "output/htmlcov"
+
+[tool.coverage.xml]
+directory = "output/xml"
+
+[tool.coverage.run]
+source = ["./src"]
+
+[tool.coverage.report]
+fail_under = 70
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+log_cli_level = "INFO"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_level = "INFO"
+python_files = ["tests.py", "test_*.py", "*_tests.py", "*_test.py"]
+pythonpath = ". src"
+addopts = [
+    "--ruff",
+    "--cov=./src",
+    "--cov-report=xml",
+    "--no-cov-on-fail",
+    "-p no:warnings"
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "W"]        # pycodestyle-equivalent checks
+
 [tool.uv]
+package = false
 default-groups = "all"
 
 [[tool.uv.index]]
