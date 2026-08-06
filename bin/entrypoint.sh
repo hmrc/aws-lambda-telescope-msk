@@ -28,6 +28,7 @@ pip install --requirement "${REQUIREMENTS_FILE}" \
             --implementation cp \
             --index-url "${PIP_INDEX_URL}" \
             --only-binary=:all: \
+            --platform "manylinux_2_28_x86_64" \
             --platform "manylinux2014_x86_64" \
             --target="./${VENV_NAME}/lib/python${PYTHON_VERSION_LIB}/site-packages"
 
