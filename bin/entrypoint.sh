@@ -11,7 +11,7 @@ cp /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list.d/debian.sources
 sed --in-place 's|http://|https://|g' /etc/apt/sources.list.d/debian.sources
 
 # Update the package listing, so we know what package exist:
-apt-get update && apt-get -y upgrade && apt-get install -y librdkafka-dev libssl-dev zip
+apt-get update && apt-get -y upgrade && apt-get install -y libssl-dev zip
 
 # Install requirements
 python -m venv "${VENV_NAME}"

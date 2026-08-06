@@ -15,7 +15,7 @@ classifiers = [
 
 dependencies = [
     "aws-lambda-powertools",
-    "confluent-kafka[oauthbearer-aws]",
+    "confluent-kafka",
     "cryptography",
     "urllib3>=2.7.0",
 ]
