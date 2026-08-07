@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#MISE depends=["package"]
 #MISE description="Publish both the zip and checksum files to S3"
+#MISE depends=["package"]
 
 VERSION=$(cat .version)
 

@@ -27,11 +27,10 @@ dev = [
     "black",
     "boto3",
     "colorama",
-    "pre-commit",
     "pytest",
     "pytest-cov",
     "pytest-ruff",
-    "version-incrementor>=1.10.0,<2",
+    "version-incrementor",
 ]
 
 [tool.coverage.run]

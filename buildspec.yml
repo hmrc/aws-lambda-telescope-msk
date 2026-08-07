@@ -3,7 +3,6 @@ env:
   shell: bash
   variables:
     MISE_DISABLE_TOOLS: uv # uv is already installed in the build container
-    PUBLISH_TO_CIP_S3: "false"
 
 phases:
   install:
