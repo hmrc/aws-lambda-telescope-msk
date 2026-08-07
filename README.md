@@ -29,6 +29,10 @@ Install dependencies using uv:
 
 ```shell
 mise run setup
+# Run tests:
+mise run test
+# Package the lambda locally:
+mise run package
 ```
 
 All available interactions with the MSK cluster are packaged as individual Python scripts in `bin/`.

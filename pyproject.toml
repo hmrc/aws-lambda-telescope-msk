@@ -1,7 +1,7 @@
 [project]
 name = "aws-lambda-telescope-msk"
-version = "0.1.0"
-description = "Telescope library for interacting with an MSK/Kafka cluster"
+version = "1.0.0"
+description = "Telescope library for interacting with our MSK/Kafka cluster"
 authors = [{ name = "Team Telemetry", email = "telemetry@digital.hmrc.gov.uk" }]
 license = "Apache 2.0"
 maintainers = [{ name = "Team Telemetry", email = "telemetry@digital.hmrc.gov.uk" }]
